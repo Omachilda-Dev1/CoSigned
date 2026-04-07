@@ -187,16 +187,21 @@ mint(address to, TokenType tokenType, string metadataURI)
 - Either the mentor OR learner can raise it
 
 **What happens during the 7-day window?**
-- The other party can still call `signCompletion()` — if they do, the bond completes normally
-- If 7 days pass with no completion, `resolveDispute()` can be called
+- Once a dispute is raised, `signCompletion()` is BLOCKED — status is no longer signable
+- If 7 days pass with no resolution, `resolveDispute()` can be called by ANYONE
+- Stake is always refunded to the learner — mentor gets nothing (no completion = no credential)
 
-**Edge case: Both parties try to dispute simultaneously**
-- Only one `disputeBond()` call can succeed — the second will fail because status is already `Disputed`
-- The `disputeOpenedAt` timestamp is set by whoever calls first
-- This is acceptable: the outcome (stake refund to learner) is the same regardless of who raised it
+**Edge cases — all resolved:**
+- Both parties dispute simultaneously → first call wins, second reverts. Same outcome either way.
+- Deadline passes, no dispute raised → bond stays Active indefinitely. No forced resolution.
+- Both parties disappear after dispute → anyone can call `resolveDispute()` after 7 days. ETH never permanently locked.
+- Partial signing + deadline passes → `disputeBond()` requires `Active` status, so `MentorSigned`/`LearnerSigned` bonds cannot be disputed. Post-MVP: add `abandonBond()` for this case.
 
 **What "no response" means in code:**
-- After `disputeOpenedAt + 7 days`, if `bond.status` is still `Disputed` (not `Completed`), the dispute resolves in the learner's favor
+- After `disputeOpenedAt + 7 days`, if `bond.status` is still `Disputed`, `resolveDispute()` is callable
+- No oracle needed — purely time-based using `block.timestamp`
+
+> See `docs/contract-design.md` for full pseudocode, reentrancy analysis, and all 7 dispute scenarios.
 
 ---
 

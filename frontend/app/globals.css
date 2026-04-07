@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CoSigned Brand CSS Variables ─────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --bg-dark:        #0D0D0D;
+  --bg-dark-card:   #141414;
+  --bg-light:       #F5F0E8;
+  --bg-light-card:  #FFFFFF;
+
+  /* Brand accents */
+  --accent-teal:    #4DFFD2;
+  --accent-yellow:  #C8FF4D;
+  --lock-gold:      #E8C84D;
+
+  /* Text */
+  --text-dark:      #1A1A1A;
+  --text-light:     #F5F0E8;
+  --text-muted:     #6B7280;
+
+  /* Gradients */
+  --brand-gradient: linear-gradient(135deg, #4DFFD2 0%, #C8FF4D 100%);
+  --brand-gradient-h: linear-gradient(90deg, #4DFFD2 0%, #C8FF4D 100%);
+
+  /* Status */
+  --status-pending:   #C8FF4D;
+  --status-active:    #4DFFD2;
+  --status-signed:    #F97316;
+  --status-completed: #4DFFD2;
+  --status-disputed:  #EF4444;
+}
+
+/* ── Dark mode defaults ────────────────────────────────────────────────────── */
+.dark, [data-theme="dark"] {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+}
+
+/* ── Light mode defaults ───────────────────────────────────────────────────── */
+[data-theme="light"] {
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+}
+
+/* ── Utility: brand gradient text ──────────────────────────────────────────── */
+.text-brand-gradient {
+  background: var(--brand-gradient-h);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

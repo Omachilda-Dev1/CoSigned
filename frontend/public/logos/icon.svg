@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="CoSigned icon">
+  <defs>
+    <linearGradient id="iconGrad-icon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4DFFD2"/>
+      <stop offset="100%" stop-color="#C8FF4D"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Top-left to bottom-right pen nib (left arm) -->
+  <path d="M6 6 L26 26 L34 22 L22 10 Z" stroke="url(#iconGrad-icon)" stroke-width="2.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- Nib tip pointing down-right -->
+  <path d="M26 26 L30 42 L42 30 Z" stroke="url(#iconGrad-icon)" stroke-width="2.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <!-- Top-right to bottom-left pen nib (right arm) -->
+  <path d="M58 6 L38 26 L30 22 L42 10 Z" stroke="url(#iconGrad-icon)" stroke-width="2.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- Nib tip pointing down-left -->
+  <path d="M38 26 L34 42 L22 30 Z" stroke="url(#iconGrad-icon)" stroke-width="2.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <!-- Top connecting arc (heart-like curve at top) -->
+  <path d="M6 6 Q32 -6 58 6" stroke="url(#iconGrad-icon)" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+
+  <!-- Bottom connecting arc -->
+  <path d="M22 30 Q32 46 42 30" stroke="url(#iconGrad-icon)" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+
+  <!-- Lock body (center) -->
+  <rect x="25.5" y="24" width="13" height="10" rx="2" fill="#0D0D0D" stroke="#E8C84D" stroke-width="1.8"/>
+  <!-- Lock shackle -->
+  <path d="M28.5 24 Q28.5 19 32 19 Q35.5 19 35.5 24" stroke="#E8C84D" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <!-- Lock keyhole dot -->
+  <circle cx="32" cy="29" r="1.5" fill="#E8C84D"/>
+</svg>

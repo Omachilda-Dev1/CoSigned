@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 72" fill="none" role="img" aria-label="CoSigned logo">
+  <defs>
+    <linearGradient id="iconGrad-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4DFFD2"/>
+      <stop offset="100%" stop-color="#C8FF4D"/>
+    </linearGradient>
+    <linearGradient id="textGrad-dark" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4DFFD2"/>
+      <stop offset="100%" stop-color="#C8FF4D"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Icon: two crossed pen nibs forming an X, with lock in center -->
+  <g transform="translate(4, 4)">
+    <!-- Top-left to bottom-right pen nib -->
+    <path d="M8 8 L28 28 L36 24 L24 12 Z" stroke="url(#iconGrad-dark)" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- Nib tip bottom-right -->
+    <path d="M28 28 L32 40 L40 32 Z" stroke="url(#iconGrad-dark)" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+
+    <!-- Top-right to bottom-left pen nib -->
+    <path d="M56 8 L36 28 L28 24 L40 12 Z" stroke="url(#iconGrad-dark)" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- Nib tip bottom-left -->
+    <path d="M36 28 L32 40 L24 32 Z" stroke="url(#iconGrad-dark)" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+
+    <!-- Top arcs connecting the nibs -->
+    <path d="M8 8 Q32 -4 56 8" stroke="url(#iconGrad-dark)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Bottom arcs -->
+    <path d="M24 32 Q32 44 40 32" stroke="url(#iconGrad-dark)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+    <!-- Lock body -->
+    <rect x="27" y="22" width="10" height="8" rx="1.5" fill="#0D0D0D" stroke="#E8C84D" stroke-width="1.5"/>
+    <!-- Lock shackle -->
+    <path d="M29.5 22 Q29.5 18 32 18 Q34.5 18 34.5 22" stroke="#E8C84D" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Lock keyhole -->
+    <circle cx="32" cy="26" r="1.2" fill="#E8C84D"/>
+  </g>
+
+  <!-- Wordmark -->
+  <!-- "Co" in teal -->
+  <text x="76" y="50" font-family="'Syne', 'Arial Black', sans-serif" font-weight="700" font-size="36" fill="#4DFFD2">Co</text>
+  <!-- "Signed" in yellow-green -->
+  <text x="130" y="50" font-family="'Syne', 'Arial Black', sans-serif" font-weight="700" font-size="36" fill="#C8FF4D">Signed</text>
+</svg>
