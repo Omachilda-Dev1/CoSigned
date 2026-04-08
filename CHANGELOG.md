@@ -42,6 +42,40 @@ All notable changes to this project will be documented here.
 ### Updated
 - `docs/architecture.md` — dispute resolution section expanded with all edge cases resolved
 
+## [Day 3] — 2026-04-08
+
+### Added
+- Root Hardhat project initialized (`npm init`, `package.json` with scripts)
+- Hardhat 2.28.6 + `@nomicfoundation/hardhat-toolbox@5` installed
+- `@openzeppelin/contracts@5` installed
+- `hardhat.config.js` fully configured:
+  - Solidity 0.8.20 with optimizer (200 runs)
+  - `hardhat` local network (chainId 31337)
+  - `baseSepolia` network (chainId 84532, RPC from env)
+  - BaseScan etherscan verification config with custom chain
+  - Gas reporter (opt-in via `REPORT_GAS=true`)
+  - Custom paths pointing to `contracts/` and `contracts/test/`
+- `package.json` scripts: compile, test, deploy:local, deploy:testnet, verify, clean
+- Frontend Next.js 14 scaffolded manually:
+  - `next`, `react`, `react-dom` installed
+  - `wagmi@2`, `@rainbow-me/rainbowkit`, `viem@2`, `@tanstack/react-query`
+  - `zustand`, `framer-motion`, `react-hook-form`, `zod`, `pinata`
+  - `typescript`, `@types/node`, `@types/react`, `@types/react-dom`
+  - `tailwindcss`, `postcss`, `autoprefixer`
+- `frontend/tsconfig.json` — strict TypeScript, path alias `@/*`
+- `frontend/next.config.ts` — webpack fallback for Node.js modules (wagmi compat)
+- `frontend/postcss.config.js` — Tailwind + autoprefixer
+- `frontend/app/layout.tsx` — root layout with Syne + DM Mono fonts, dark mode default, metadata
+- `frontend/.env.local.example` — frontend-specific env vars
+- `.gitignore` updated — `frontend/.env.local` excluded
+
+### Fixed
+- Hardhat 3 / toolbox version mismatch — downgraded to Hardhat 2.28.6 (stable, full toolbox support)
+- npm ENOTEMPTY error during TypeScript install — resolved with `--legacy-peer-deps`
+
+### Verified
+- `npx hardhat compile` → "Compiled 2 Solidity files successfully (evm target: paris)"
+
 ---
 
-<!-- Day 3+ entries will be added here -->
+<!-- Day 4+ entries will be added here -->

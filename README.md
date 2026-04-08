@@ -35,10 +35,10 @@ If either party ghosts after the deadline, the other can raise a dispute. After 
 
 | Layer | Technology |
 |---|---|
-| Smart Contracts | Solidity, Hardhat, ERC-5192 |
-| Blockchain | Base Sepolia Testnet |
+| Smart Contracts | Solidity 0.8.20, Hardhat 2.x, ERC-5192 |
+| Blockchain | Base Sepolia Testnet (chainId: 84532) |
 | Frontend | Next.js 14 (App Router), Tailwind CSS, Framer Motion |
-| Web3 | Wagmi v2, RainbowKit, ethers.js v6 |
+| Web3 | Wagmi v2, RainbowKit, viem v2 |
 | State | Zustand |
 | Forms | React Hook Form + Zod |
 | Storage | IPFS via Pinata SDK |
@@ -64,6 +64,30 @@ If either party ghosts after the deadline, the other can raise a dispute. After 
 - `LearnerSigned` — Learner has signed, waiting on mentor
 - `Completed` — Both signed, NFTs minted, stake refunded
 - `Disputed` — Deadline passed, dispute raised, 7-day resolution window
+
+---
+
+## Scope Lock (30-Day Challenge)
+
+### ✅ In scope — ships by Day 30
+- Full Bond lifecycle on-chain (create → accept → sign → complete → mint)
+- Dispute mechanism with 7-day resolution window
+- Soulbound NFT minting (ERC-5192) to both parties
+- IPFS metadata upload via Pinata
+- Full frontend — 6 pages (Landing, Dashboard, Create Bond, Bond Detail, Profile, Explore)
+- Wallet connection via RainbowKit (MetaMask, Coinbase Wallet, WalletConnect)
+- Testnet deployment on Base Sepolia
+- Contract verification on BaseScan
+- Real user testing (Day 26–27)
+- Vercel production deployment
+
+### 🔮 Post-roadmap (not in 30 days)
+- Mainnet deployment
+- The Graph subgraph for efficient bond querying
+- DAO governance for dispute resolution
+- Multi-skill bonds
+- Mentor staking
+- Mobile app
 
 ---
 
@@ -93,9 +117,11 @@ cosigned/
 ├── scripts/
 │   └── deploy.js
 ├── hardhat.config.js
+├── package.json
 ├── deployments.json
 └── frontend/
     ├── app/
+    │   ├── layout.tsx
     │   ├── page.tsx              # Landing
     │   ├── dashboard/page.tsx    # User dashboard
     │   ├── bond/
@@ -117,56 +143,35 @@ cosigned/
 
 ---
 
-## Smart Contract Functions (Planned)
-
-### CoSigned.sol
-| Function | Caller | Description |
-|---|---|---|
-| `createBond(learner, skillTitle, successCriteria, deadline, ipfsHash)` | Mentor | Creates a new Bond |
-| `acceptBond(bondId)` | Learner (payable) | Accepts bond, stakes ETH |
-| `signCompletion(bondId)` | Mentor or Learner | Signs off on completion |
-| `disputeBond(bondId)` | Mentor or Learner | Raises dispute after deadline |
-| `resolveDispute(bondId)` | Either party | Resolves after 7-day window |
-| `getBond(bondId)` | Anyone | Returns Bond struct |
-| `getBondsByAddress(address)` | Anyone | Returns all bond IDs for a wallet |
-
-### CoSignedNFT.sol
-| Function | Description |
-|---|---|
-| `mint(to, tokenType, metadataURI)` | Mints soulbound NFT — only callable by CoSigned.sol |
-| `locked(tokenId)` | ERC-5192: always returns true |
-| `transferFrom(...)` | Reverts — soulbound |
-
----
-
-## Frontend Pages (Planned)
-
-| Page | Path | Purpose |
-|---|---|---|
-| Landing | `/` | Hero, how it works, live stats |
-| Dashboard | `/dashboard` | All bonds for connected wallet |
-| Create Bond | `/bond/create` | Mentor creates a new bond |
-| Bond Detail | `/bond/[id]` | View bond, take action (sign/accept/dispute) |
-| Public Profile | `/profile/[address]` | Shareable reputation page |
-| Explore | `/explore` | Discover open bonds |
-
----
-
-## Setup (Coming Day 3+)
+## Setup & Run Locally
 
 ```bash
-# Clone
-git clone https://github.com/[your-handle]/cosigned
-cd cosigned
+# 1. Clone
+git clone https://github.com/Omachilda-Dev1/CoSigned.git
+cd CoSigned
 
-# Contracts
+# 2. Install contract dependencies
 npm install
+
+# 3. Copy env and fill in your values
+cp .env.example .env
+
+# 4. Compile contracts
 npx hardhat compile
 
-# Frontend
+# 5. Run tests
+npx hardhat test
+
+# 6. Install frontend dependencies
 cd frontend
 npm install
+
+# 7. Copy frontend env
+cp .env.local.example .env.local
+
+# 8. Run frontend dev server
 npm run dev
+# → http://localhost:3000
 ```
 
 ---
