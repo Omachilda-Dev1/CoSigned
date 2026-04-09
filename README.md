@@ -69,7 +69,7 @@ If either party ghosts after the deadline, the other can raise a dispute. After 
 
 ## Scope Lock (30-Day Challenge)
 
-### ✅ In scope — ships by Day 30
+### In scope — ships by Day 30
 - Full Bond lifecycle on-chain (create → accept → sign → complete → mint)
 - Dispute mechanism with 7-day resolution window
 - Soulbound NFT minting (ERC-5192) to both parties
@@ -81,7 +81,7 @@ If either party ghosts after the deadline, the other can raise a dispute. After 
 - Real user testing (Day 26–27)
 - Vercel production deployment
 
-### 🔮 Post-roadmap (not in 30 days)
+###  Post-roadmap (not in 30 days)
 - Mainnet deployment
 - The Graph subgraph for efficient bond querying
 - DAO governance for dispute resolution
@@ -190,6 +190,6 @@ npm run dev
 
 ## Built By
 
-Chioma — #ENg30DayChallenge | #ENgShipIt | #CoSigned
+Chioma Ogbonna— #ENg30DayChallenge | #ENgShipIt | #CoSigned
 
 > CoSigned — Your skills. Witnessed on-chain. 🔏
