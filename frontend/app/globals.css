@@ -2,52 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── CoSigned Brand CSS Variables ─────────────────────────────────────────── */
+/* ── Base ─────────────────────────────────────────────────────────────────── */
 :root {
-  /* Backgrounds */
-  --bg-dark:        #0D0D0D;
-  --bg-dark-card:   #141414;
-  --bg-light:       #F5F0E8;
-  --bg-light-card:  #FFFFFF;
-
-  /* Brand accents */
-  --accent-teal:    #4DFFD2;
-  --accent-yellow:  #C8FF4D;
-  --lock-gold:      #E8C84D;
-
-  /* Text */
-  --text-dark:      #1A1A1A;
-  --text-light:     #F5F0E8;
-  --text-muted:     #6B7280;
-
-  /* Gradients */
-  --brand-gradient: linear-gradient(135deg, #4DFFD2 0%, #C8FF4D 100%);
-  --brand-gradient-h: linear-gradient(90deg, #4DFFD2 0%, #C8FF4D 100%);
-
-  /* Status */
-  --status-pending:   #C8FF4D;
-  --status-active:    #4DFFD2;
-  --status-signed:    #F97316;
-  --status-completed: #4DFFD2;
-  --status-disputed:  #EF4444;
+  --bg:           #E8E4DC;
+  --bg-card:      #DEDAD2;
+  --bg-card-alt:  #D4D0C8;
+  --border:       #C4C0B8;
+  --text:         #1A1A1A;
+  --text-sub:     #4a4844;
+  --text-muted:   #7a7670;
+  --accent:       #4DFFD2;
+  --accent-2:     #C8FF4D;
+  --lock-gold:    #E8C84D;
 }
 
-/* ── Dark mode defaults ────────────────────────────────────────────────────── */
-.dark, [data-theme="dark"] {
-  background-color: var(--bg-dark);
-  color: var(--text-light);
+.dark {
+  --bg:           #0D0D0D;
+  --bg-card:      #141414;
+  --bg-card-alt:  #1c1c1c;
+  --border:       #2a2a2a;
+  --text:         #F5F0E8;
+  --text-sub:     #a09c96;
+  --text-muted:   #6B7280;
+  --accent:       #4DFFD2;
+  --accent-2:     #C8FF4D;
+  --lock-gold:    #E8C84D;
 }
 
-/* ── Light mode defaults ───────────────────────────────────────────────────── */
-[data-theme="light"] {
-  background-color: var(--bg-light);
-  color: var(--text-dark);
+html {
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* ── Utility: brand gradient text ──────────────────────────────────────────── */
-.text-brand-gradient {
-  background: var(--brand-gradient-h);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+body {
+  background-color: var(--bg);
+  color: var(--text);
 }

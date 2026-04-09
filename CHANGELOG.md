@@ -78,4 +78,49 @@ All notable changes to this project will be documented here.
 
 ---
 
-<!-- Day 4+ entries will be added here -->
+## [Day 4] — 2026-04-09
+
+### Added
+- `README.md` — full production-quality rewrite:
+  - Centered hero with badges (MIT, Built on Base, Hardhat, Next.js, challenge tag)
+  - Live demo / BaseScan / demo video links (placeholders until Day 14/29)
+  - Problem, Solution, How It Works, Tech Stack table, Bond status flow
+  - Full project structure tree with inline comments
+  - 4-step setup guide with code blocks
+  - 30-day roadmap table with live status column (✅/🔨/⏳)
+  - Scope lock section (in/out of 30 days)
+- `CONTRIBUTING.md` — contributor guide with conventional commits, code standards, issue labels
+- `LICENSE` — MIT
+- `.github/ISSUE_TEMPLATE/bug_report.md` — with TX hash field for Web3 bugs
+- `.github/ISSUE_TEMPLATE/feature_request.md` — with in-scope checkbox
+- `.github/ISSUE_TEMPLATE/security.md` — severity levels: Critical/High/Medium/Low
+- `.github/MILESTONES.md` — 26 issues across 3 milestones, labeled by day
+- `.github/PULL_REQUEST_TEMPLATE.md` — compile + test + no-any checklist
+- `frontend/next.config.js` — replaced unsupported next.config.ts
+- `frontend/app/globals.css` — full CSS variable system for dark/light theming
+- `frontend/app/layout.tsx` — Syne + DM Mono fonts, dark class default, metadata
+- `frontend/app/page.tsx` — full landing page:
+  - Nav: logo, theme toggle, Base Sepolia badge, Connect Wallet button
+  - Hero: two-column layout — copy left, SVG illustration right
+  - How It Works: editorial table layout (number / title / description)
+  - Why CoSigned: three joined panels with stat callouts
+  - CTA section + footer
+- `frontend/components/ui/ThemeToggle.tsx` — SVG sun/moon icons, rectangular button, CSS variable driven
+- `frontend/components/ui/HeroIllustration.tsx` — inline SVG showing full Bond flow:
+  Mentor wallet → Bond card (lock, skill, status, signatures) → Learner wallet
+  → MENTOR PROOF + LEARNER PROOF NFT cards. Fully theme-aware via CSS variables.
+
+### Fixed
+- `next.config.ts` → `next.config.js` — Next.js 14 does not support .ts config files
+- Tailwind v4 → v3 — v4 moved PostCSS plugin to separate package, broke globals.css
+- Cleared `.next` cache after Tailwind version swap (stale v4 cache caused ENOENT errors)
+- Hero padding reduced (pt-24 → pt-14) — buttons were below the fold
+- ThemeToggle replaced emoji sun/moon with SVG Feather-style icons
+- Light mode background darkened: `#F5F0E8` → `#E8E4DC` (less stark, more muted)
+
+### Verified
+- `npm run dev` → compiles clean, localhost:3000 live
+
+---
+
+<!-- Day 5+ entries will be added here -->

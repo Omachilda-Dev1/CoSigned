@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   // Required for wagmi/viem — they use Node.js modules
   webpack: (config) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
@@ -8,4 +7,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

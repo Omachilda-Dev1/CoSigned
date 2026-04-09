@@ -34,7 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${syne.variable} ${dmMono.variable} bg-bg-dark text-text-light antialiased`}>
+      <body className={`${syne.variable} ${dmMono.variable} antialiased`}>
         {children}
       </body>
     </html>
