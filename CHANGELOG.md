@@ -123,4 +123,28 @@ All notable changes to this project will be documented here.
 
 ---
 
-<!-- Day 5+ entries will be added here -->
+## [Day 5] — 2026-04-10
+
+### Added
+- `contracts/CoSigned.sol` — first real Solidity, fully compiled:
+  - `BondStatus` enum: Pending, Active, MentorSigned, LearnerSigned, Completed, Disputed
+  - `Bond` struct: all 12 fields (id, mentor, learner, skillTitle, successCriteria,
+    stakeAmount, status, deadline, ipfsHash, mentorSigned, learnerSigned, disputeOpenedAt)
+  - State variables: `bondCounter`, `bonds` mapping, `mentorBonds` mapping, `learnerBonds` mapping
+  - 6 events with indexed parameters: BondCreated, BondAccepted, BondSigned,
+    BondCompleted, BondDisputed, DisputeResolved
+  - `getBond(uint256)` view function
+  - `getBondsByAddress(address)` view function — concatenates mentor + learner arrays
+  - Inherits `ReentrancyGuard` from OpenZeppelin v5
+  - Full NatSpec documentation on every struct, event, and function
+
+### Fixed
+- OZ v5 import path: `security/ReentrancyGuard.sol` → `utils/ReentrancyGuard.sol`
+  (OpenZeppelin v5 reorganised the security module)
+
+### Verified
+- `npx hardhat clean && npx hardhat compile` → "Compiled 4 Solidity files successfully (evm target: paris)"
+
+---
+
+<!-- Day 6+ entries will be added here -->
