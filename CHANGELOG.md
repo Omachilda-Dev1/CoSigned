@@ -147,4 +147,33 @@ All notable changes to this project will be documented here.
 
 ---
 
-<!-- Day 6+ entries will be added here -->
+## [Day 6] — 2026-04-11
+
+### Added
+- `contracts/CoSigned.sol` — `createBond()` and `acceptBond()`:
+
+  `createBond(address learner, string skillTitle, string successCriteria, uint256 deadline, string ipfsHash)`
+  - 5 require checks: learner != zero, learner != mentor, deadline in future,
+    skillTitle not empty, successCriteria not empty
+  - Increments bondCounter, stores full Bond struct, pushes to both
+    mentorBonds and learnerBonds mappings
+  - Emits BondCreated
+  - Returns bondId
+  - Uses calldata for string params (gas efficient)
+
+  `acceptBond(uint256 bondId) payable`
+  - 4 require checks: caller is designated learner, status is Pending,
+    msg.value > 0, deadline has not passed
+  - Sets stakeAmount = msg.value, status = Active
+  - ETH held in contract — no transfer on acceptance
+  - Emits BondAccepted
+
+### Fixed
+- Hardhat cache stale after Day 5 edit — ran `npx hardhat clean` before recompile
+
+### Verified
+- `npx hardhat clean; npx hardhat compile` → "Compiled 4 Solidity files successfully (evm target: paris)"
+
+---
+
+<!-- Day 7+ entries will be added here -->

@@ -9,10 +9,10 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
  *         A mentor and learner co-sign a Bond on-chain.
  *         When both sign, soulbound NFTs are minted to each party.
  * @dev Day 5: Bond struct, BondStatus enum, storage mappings, events
- *      Day 6: createBond, acceptBond (added below)
- *      Day 7: signCompletion (added below)
- *      Day 8: disputeBond, resolveDispute (added below)
- *      Day 10: wire to CoSignedNFT
+ *      Day 6: createBond, acceptBond
+ *      Day 7: signCompletion (coming)
+ *      Day 8: disputeBond, resolveDispute (coming)
+ *      Day 10: wire to CoSignedNFT (coming)
  */
 contract CoSigned is ReentrancyGuard {
 
@@ -155,6 +155,85 @@ contract CoSigned is ReentrancyGuard {
         address indexed resolvedBy,
         uint256 refundedAmount
     );
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // WRITE FUNCTIONS
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * @notice Mentor creates a new Bond for a designated learner.
+     * @dev Increments bondCounter, stores the Bond, updates both address mappings.
+     *      ipfsHash should be the CID of the evidence/metadata JSON uploaded
+     *      to IPFS before calling this function.
+     * @param learner          Address of the learner for this bond.
+     * @param skillTitle       Short title of the skill being mentored.
+     * @param successCriteria  Description of what completion looks like.
+     * @param deadline         Unix timestamp — bond must complete before this.
+     * @param ipfsHash         IPFS CID of the bond evidence/metadata JSON.
+     * @return bondId          The ID of the newly created bond.
+     */
+    function createBond(
+        address learner,
+        string calldata skillTitle,
+        string calldata successCriteria,
+        uint256 deadline,
+        string calldata ipfsHash
+    ) external returns (uint256 bondId) {
+        // ── Checks ──────────────────────────────────────────────────────────
+        require(learner != address(0),   "CoSigned: invalid learner address");
+        require(learner != msg.sender,   "CoSigned: mentor cannot be learner");
+        require(deadline > block.timestamp, "CoSigned: deadline must be in future");
+        require(bytes(skillTitle).length > 0,       "CoSigned: skill title required");
+        require(bytes(successCriteria).length > 0,  "CoSigned: success criteria required");
+
+        // ── Effects ─────────────────────────────────────────────────────────
+        bondCounter++;
+        bondId = bondCounter;
+
+        bonds[bondId] = Bond({
+            id:              bondId,
+            mentor:          msg.sender,
+            learner:         learner,
+            skillTitle:      skillTitle,
+            successCriteria: successCriteria,
+            stakeAmount:     0,
+            status:          BondStatus.Pending,
+            deadline:        deadline,
+            ipfsHash:        ipfsHash,
+            mentorSigned:    false,
+            learnerSigned:   false,
+            disputeOpenedAt: 0
+        });
+
+        mentorBonds[msg.sender].push(bondId);
+        learnerBonds[learner].push(bondId);
+
+        emit BondCreated(bondId, msg.sender, learner, skillTitle, deadline);
+    }
+
+    /**
+     * @notice Learner accepts a Pending bond and stakes ETH as commitment.
+     * @dev ETH is held in this contract until completion or dispute resolution.
+     *      No transfer occurs here — only on signCompletion or resolveDispute.
+     *      msg.value becomes the stakeAmount; any amount > 0 is accepted.
+     *      Frontend should suggest a minimum (e.g. 0.001 ETH) for UX.
+     * @param bondId The ID of the bond to accept.
+     */
+    function acceptBond(uint256 bondId) external payable {
+        Bond storage bond = bonds[bondId];
+
+        // ── Checks ──────────────────────────────────────────────────────────
+        require(bond.learner == msg.sender,          "CoSigned: not the designated learner");
+        require(bond.status == BondStatus.Pending,   "CoSigned: bond not in pending state");
+        require(msg.value > 0,                       "CoSigned: stake amount must be > 0");
+        require(block.timestamp < bond.deadline,     "CoSigned: bond deadline has passed");
+
+        // ── Effects ─────────────────────────────────────────────────────────
+        bond.stakeAmount = msg.value;
+        bond.status      = BondStatus.Active;
+
+        emit BondAccepted(bondId, msg.sender, msg.value);
+    }
 
     // ─────────────────────────────────────────────────────────────────────────
     // VIEW FUNCTIONS
