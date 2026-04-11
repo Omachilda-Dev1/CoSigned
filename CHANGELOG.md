@@ -176,4 +176,33 @@ All notable changes to this project will be documented here.
 
 ---
 
-<!-- Day 7+ entries will be added here -->
+## [Day 7] — 2026-04-12
+
+### Added
+- `contracts/CoSigned.sol` — `signCompletion()` and `_mintSoulboundNFTs()`:
+
+  `signCompletion(uint256 bondId) nonReentrant`
+  - Requires: caller is mentor or learner, bond is in signable state
+    (Active, MentorSigned, or LearnerSigned)
+  - Guards against double-signing: "mentor already signed" / "learner already signed"
+  - Records signature on the correct party's bool flag
+  - Updates status: Active → MentorSigned or LearnerSigned after first sig
+  - Emits BondSigned after every call
+  - On second signature (both true):
+    - Sets status = Completed
+    - Caches learner address and refund amount into local vars
+    - Zeros out stakeAmount BEFORE transfer (CEI pattern)
+    - Emits BondCompleted BEFORE external calls
+    - Transfers ETH refund to learner via .call{value}()
+    - Calls _mintSoulboundNFTs() (placeholder until Day 10)
+
+  `_mintSoulboundNFTs(uint256 bondId) internal`
+  - Placeholder with commented-out NFT contract calls
+  - Will be replaced on Day 10 when CoSignedNFT.sol is wired in
+
+### Verified
+- `npx hardhat clean; npx hardhat compile` → "Compiled 4 Solidity files successfully (evm target: paris)"
+
+---
+
+<!-- Day 8+ entries will be added here -->

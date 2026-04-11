@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
  *         When both sign, soulbound NFTs are minted to each party.
  * @dev Day 5: Bond struct, BondStatus enum, storage mappings, events
  *      Day 6: createBond, acceptBond
- *      Day 7: signCompletion (coming)
+ *      Day 7: signCompletion, _mintSoulboundNFTs (placeholder)
  *      Day 8: disputeBond, resolveDispute (coming)
  *      Day 10: wire to CoSignedNFT (coming)
  */
@@ -233,6 +233,88 @@ contract CoSigned is ReentrancyGuard {
         bond.status      = BondStatus.Active;
 
         emit BondAccepted(bondId, msg.sender, msg.value);
+    }
+
+    /**
+     * @notice Either party signs off on bond completion.
+     * @dev The second signature triggers: stake refund + NFT mint.
+     *      Implements Checks-Effects-Interactions to prevent reentrancy.
+     *      nonReentrant provides a second layer of protection on the ETH transfer.
+     *
+     *      State machine:
+     *        Active       + mentor signs  → MentorSigned
+     *        Active       + learner signs → LearnerSigned
+     *        MentorSigned + learner signs → Completed (refund + mint)
+     *        LearnerSigned + mentor signs → Completed (refund + mint)
+     *
+     * @param bondId The ID of the bond to sign.
+     */
+    function signCompletion(uint256 bondId) external nonReentrant {
+        Bond storage bond = bonds[bondId];
+
+        // ── Checks ──────────────────────────────────────────────────────────
+        require(
+            msg.sender == bond.mentor || msg.sender == bond.learner,
+            "CoSigned: not a party to this bond"
+        );
+        require(
+            bond.status == BondStatus.Active       ||
+            bond.status == BondStatus.MentorSigned ||
+            bond.status == BondStatus.LearnerSigned,
+            "CoSigned: bond not in signable state"
+        );
+
+        // ── Effects: record this party's signature ───────────────────────────
+        if (msg.sender == bond.mentor) {
+            require(!bond.mentorSigned, "CoSigned: mentor already signed");
+            bond.mentorSigned = true;
+        } else {
+            require(!bond.learnerSigned, "CoSigned: learner already signed");
+            bond.learnerSigned = true;
+        }
+
+        // Update status to reflect current signature state
+        if (bond.mentorSigned && !bond.learnerSigned) {
+            bond.status = BondStatus.MentorSigned;
+        } else if (bond.learnerSigned && !bond.mentorSigned) {
+            bond.status = BondStatus.LearnerSigned;
+        }
+
+        emit BondSigned(bondId, msg.sender, bond.mentorSigned, bond.learnerSigned);
+
+        // ── Both signed → complete the bond ─────────────────────────────────
+        if (bond.mentorSigned && bond.learnerSigned) {
+            // Effects first — update all state before any external calls (CEI)
+            bond.status = BondStatus.Completed;
+
+            uint256 refund   = bond.stakeAmount;
+            address learner  = bond.learner;
+            address mentor   = bond.mentor;
+
+            bond.stakeAmount = 0; // zero out before transfer — reentrancy guard
+
+            emit BondCompleted(bondId, mentor, learner);
+
+            // Interactions — ETH transfer then NFT mint (both external)
+            (bool success, ) = learner.call{value: refund}("");
+            require(success, "CoSigned: stake refund failed");
+
+            _mintSoulboundNFTs(bondId);
+        }
+    }
+
+    /**
+     * @notice Internal — mints soulbound NFTs to both parties on bond completion.
+     * @dev Placeholder until CoSignedNFT.sol is wired in on Day 10.
+     *      Both tokens use the bond's ipfsHash as the metadata URI.
+     *      TokenType differentiates LEARNER_PROOF vs MENTOR_PROOF in metadata.
+     * @param bondId The completed bond ID.
+     */
+    function _mintSoulboundNFTs(uint256 bondId) internal {
+        // Day 10: replace with real NFT contract calls
+        // nftContract.mint(bonds[bondId].learner, TokenType.LEARNER_PROOF, bonds[bondId].ipfsHash);
+        // nftContract.mint(bonds[bondId].mentor,  TokenType.MENTOR_PROOF,  bonds[bondId].ipfsHash);
+        bondId; // suppress unused variable warning until Day 10
     }
 
     // ─────────────────────────────────────────────────────────────────────────
