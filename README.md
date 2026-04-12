@@ -190,6 +190,6 @@ npm run dev
 
 ## Built By
 
-Chioma Ogbonna— #ENg30DayChallenge | #ENgShipIt | #CoSigned
+Chioma Ogbonna— #ENg30DayChallenge | #ENgShipIt | #CoSigned | Omachilda
 
 > CoSigned — Your skills. Witnessed on-chain. 🔏
