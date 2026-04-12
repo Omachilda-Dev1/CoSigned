@@ -205,4 +205,30 @@ All notable changes to this project will be documented here.
 
 ---
 
-<!-- Day 8+ entries will be added here -->
+## [Day 8] — 2026-04-13
+
+### Added
+- `contracts/CoSigned.sol` — `disputeBond()` and `resolveDispute()`:
+
+  `disputeBond(uint256 bondId)`
+  - Requires: caller is mentor or learner, status is Active, deadline has passed
+  - Only Active bonds can be disputed — MentorSigned/LearnerSigned cannot
+    (intentional: partially-signed bonds should still be completed)
+  - Sets status = Disputed, stores disputeOpenedAt = block.timestamp
+  - Emits BondDisputed(bondId, raisedBy, disputeOpenedAt)
+  - Simultaneous dispute edge case handled: first call wins, second reverts
+
+  `resolveDispute(uint256 bondId) nonReentrant`
+  - Requires: status is Disputed, 7 days have elapsed since disputeOpenedAt
+  - Callable by ANYONE — prevents ETH being permanently locked if both
+    parties disappear after raising a dispute
+  - CEI pattern: zeros stakeAmount → emits DisputeResolved → transfers ETH
+  - Refunds full stake to learner; mentor receives nothing (no completion = no credential)
+  - Bond stays in Disputed state (terminal) — no NFTs minted
+
+### Verified
+- `npx hardhat clean; npx hardhat compile` → "Compiled 4 Solidity files successfully (evm target: paris)"
+
+---
+
+<!-- Day 9+ entries will be added here -->

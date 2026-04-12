@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
  * @dev Day 5: Bond struct, BondStatus enum, storage mappings, events
  *      Day 6: createBond, acceptBond
  *      Day 7: signCompletion, _mintSoulboundNFTs (placeholder)
- *      Day 8: disputeBond, resolveDispute (coming)
+ *      Day 8: disputeBond, resolveDispute
  *      Day 10: wire to CoSignedNFT (coming)
  */
 contract CoSigned is ReentrancyGuard {
@@ -315,6 +315,71 @@ contract CoSigned is ReentrancyGuard {
         // nftContract.mint(bonds[bondId].learner, TokenType.LEARNER_PROOF, bonds[bondId].ipfsHash);
         // nftContract.mint(bonds[bondId].mentor,  TokenType.MENTOR_PROOF,  bonds[bondId].ipfsHash);
         bondId; // suppress unused variable warning until Day 10
+    }
+
+    /**
+     * @notice Either party raises a dispute after the bond deadline has passed.
+     * @dev Only callable when status is Active — not on partially-signed bonds.
+     *      Partially-signed bonds (MentorSigned/LearnerSigned) cannot be disputed;
+     *      the other party should still sign. Post-MVP: add abandonBond() for this.
+     *
+     *      Edge case — simultaneous dispute:
+     *        If both parties call in the same block, the first succeeds and sets
+     *        status = Disputed. The second reverts because status is no longer Active.
+     *        Outcome is identical either way — no special handling needed.
+     *
+     * @param bondId The ID of the bond to dispute.
+     */
+    function disputeBond(uint256 bondId) external {
+        Bond storage bond = bonds[bondId];
+
+        // ── Checks ──────────────────────────────────────────────────────────
+        require(
+            msg.sender == bond.mentor || msg.sender == bond.learner,
+            "CoSigned: not a party to this bond"
+        );
+        require(bond.status == BondStatus.Active,       "CoSigned: bond must be active to dispute");
+        require(block.timestamp > bond.deadline,        "CoSigned: deadline has not passed yet");
+
+        // ── Effects ─────────────────────────────────────────────────────────
+        bond.status          = BondStatus.Disputed;
+        bond.disputeOpenedAt = block.timestamp;
+
+        emit BondDisputed(bondId, msg.sender, block.timestamp);
+    }
+
+    /**
+     * @notice Resolves a dispute after the 7-day window and refunds the learner's stake.
+     * @dev Callable by ANYONE after the window — not just the parties.
+     *      This prevents ETH being permanently locked if both parties disappear.
+     *      Bond stays in Disputed state (terminal) — no NFTs are minted.
+     *      Mentor receives nothing: no completion = no credential.
+     *
+     *      Implements CEI pattern:
+     *        1. Check: status == Disputed, 7 days elapsed
+     *        2. Effect: zero out stakeAmount
+     *        3. Interact: transfer ETH to learner
+     *
+     * @param bondId The ID of the disputed bond to resolve.
+     */
+    function resolveDispute(uint256 bondId) external nonReentrant {
+        Bond storage bond = bonds[bondId];
+
+        // ── Checks ──────────────────────────────────────────────────────────
+        require(bond.status == BondStatus.Disputed,                         "CoSigned: bond not in disputed state");
+        require(block.timestamp >= bond.disputeOpenedAt + 7 days,           "CoSigned: dispute window still open");
+
+        // ── Effects ─────────────────────────────────────────────────────────
+        uint256 refund  = bond.stakeAmount;
+        address learner = bond.learner;
+
+        bond.stakeAmount = 0; // zero before transfer — reentrancy guard
+
+        emit DisputeResolved(bondId, msg.sender, refund);
+
+        // ── Interactions ─────────────────────────────────────────────────────
+        (bool success, ) = learner.call{value: refund}("");
+        require(success, "CoSigned: refund failed");
     }
 
     // ─────────────────────────────────────────────────────────────────────────
