@@ -231,4 +231,40 @@ All notable changes to this project will be documented here.
 
 ---
 
-<!-- Day 9+ entries will be added here -->
+## [Day 9] — 2026-04-14
+
+### Added
+- `contracts/CoSignedNFT.sol` — ERC-5192 soulbound NFT contract, fully compiled:
+
+  ERC-5192 compliance:
+  - `locked(uint256 tokenId)` — always returns true, reverts on non-existent token
+  - Emits `Locked(tokenId)` on every mint (standard requirement)
+  - `supportsInterface()` declares `0xb45a3c0e` (ERC-5192 interface ID)
+
+  Soulbound enforcement via OZ v5 `_update()` override:
+  - Mints (from == address(0)) are allowed
+  - All transfers from real addresses revert: "CoSignedNFT: soulbound — non-transferable"
+  - `approve()` reverts (pure override)
+  - `setApprovalForAll()` reverts (pure override)
+
+  `mint(address to, TokenType tokenType, string metadataURI)`:
+  - Only callable by `cosignedContract` (set in constructor, immutable)
+  - Auto-increments `_tokenIdCounter`, first token is ID 1
+  - Calls `_safeMint`, `_setTokenURI`, stores `tokenTypes[tokenId]`
+  - Emits `Locked(tokenId)`
+
+  `TokenType` enum: `LEARNER_PROOF`, `MENTOR_PROOF`
+  Extends `ERC721URIStorage` for per-token IPFS metadata URIs
+  `cosignedContract` is immutable — set once in constructor, cannot change
+
+### Fixed
+- OZ v5 removed `_exists()` — replaced with `_ownerOf(tokenId) != address(0)`
+- OZ v5 uses `_update()` as the single transfer hook instead of
+  `_beforeTokenTransfer()` — soulbound enforcement updated accordingly
+
+### Verified
+- `npx hardhat clean; npx hardhat compile` → "Compiled 4 Solidity files successfully (evm target: paris)"
+
+---
+
+<!-- Day 10+ entries will be added here -->
