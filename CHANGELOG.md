@@ -267,4 +267,27 @@ All notable changes to this project will be documented here.
 
 ---
 
-<!-- Day 10+ entries will be added here -->
+## [Day 10] — 2026-04-15
+
+### Added
+- `contracts/CoSigned.sol` — wired to CoSignedNFT:
+  - `import "./CoSignedNFT.sol"` — direct import, no interface needed
+  - `CoSignedNFT public nftContract` state variable
+  - `constructor()` — deploys `new CoSignedNFT(address(this))` atomically.
+    CoSigned and CoSignedNFT are bound at deploy time. No separate step,
+    no risk of wrong address being passed to the NFT contract.
+  - `_mintSoulboundNFTs()` — placeholder replaced with real calls:
+    `nftContract.mint(bond.learner, CoSignedNFT.TokenType.LEARNER_PROOF, bond.ipfsHash)`
+    `nftContract.mint(bond.mentor,  CoSignedNFT.TokenType.MENTOR_PROOF,  bond.ipfsHash)`
+
+- `docs/nft-metadata-example.json` — reference metadata JSON structure
+  with all 8 attributes (Mentor, Learner, Skill, Completed, Token Type,
+  Bond ID, Chain, Soulbound)
+
+### Verified
+- `npx hardhat clean; npx hardhat compile` → "Compiled 4 Solidity files successfully (evm target: paris)"
+- Both contracts compile together with zero errors
+
+---
+
+<!-- Day 11+ entries will be added here -->

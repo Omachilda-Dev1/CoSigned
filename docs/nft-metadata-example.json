@@ -1,0 +1,16 @@
+{
+  "name": "CoSigned: React State Management",
+  "description": "Dual-signature proof of mentorship. This credential was co-signed by both mentor and learner on CoSigned — a trustless on-chain mentorship protocol. Neither party can fake it alone.",
+  "image": "ipfs://QmCoSignedBadgeImageCIDHere",
+  "external_url": "https://cosigned.app/bond/42",
+  "attributes": [
+    { "trait_type": "Mentor",     "value": "0xMentorAddressHere" },
+    { "trait_type": "Learner",    "value": "0xLearnerAddressHere" },
+    { "trait_type": "Skill",      "value": "React State Management" },
+    { "trait_type": "Completed",  "value": "2026-04-20" },
+    { "trait_type": "Token Type", "value": "LEARNER_PROOF" },
+    { "trait_type": "Bond ID",    "value": "42" },
+    { "trait_type": "Chain",      "value": "Base Sepolia" },
+    { "trait_type": "Soulbound",  "value": "true" }
+  ]
+}

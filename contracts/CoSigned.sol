@@ -2,17 +2,19 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "./CoSignedNFT.sol";
 
 /**
  * @title CoSigned
  * @notice Dual-signature mentorship Bond protocol.
  *         A mentor and learner co-sign a Bond on-chain.
  *         When both sign, soulbound NFTs are minted to each party.
- * @dev Day 5: Bond struct, BondStatus enum, storage mappings, events
- *      Day 6: createBond, acceptBond
- *      Day 7: signCompletion, _mintSoulboundNFTs (placeholder)
- *      Day 8: disputeBond, resolveDispute
- *      Day 10: wire to CoSignedNFT (coming)
+ * @dev Day 5:  Bond struct, BondStatus enum, storage mappings, events
+ *      Day 6:  createBond, acceptBond
+ *      Day 7:  signCompletion, _mintSoulboundNFTs (placeholder)
+ *      Day 8:  disputeBond, resolveDispute
+ *      Day 10: wired to CoSignedNFT — constructor deploys NFT contract,
+ *              _mintSoulboundNFTs() now calls real mint()
  */
 contract CoSigned is ReentrancyGuard {
 
@@ -73,6 +75,24 @@ contract CoSigned is ReentrancyGuard {
 
     /// @notice All bond IDs where a given address is the learner.
     mapping(address => uint256[]) public learnerBonds;
+
+    /// @notice The CoSignedNFT contract — deployed by this contract's constructor.
+    CoSignedNFT public nftContract;
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // CONSTRUCTOR
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * @notice Deploys CoSignedNFT and stores its address.
+     * @dev CoSigned deploys CoSignedNFT in its own constructor so the NFT
+     *      contract's cosignedContract address is set atomically — no
+     *      separate deployment step, no risk of wrong address being set.
+     *      The NFT contract is immutably bound to this CoSigned instance.
+     */
+    constructor() {
+        nftContract = new CoSignedNFT(address(this));
+    }
 
     // ─────────────────────────────────────────────────────────────────────────
     // EVENTS
@@ -305,16 +325,15 @@ contract CoSigned is ReentrancyGuard {
 
     /**
      * @notice Internal — mints soulbound NFTs to both parties on bond completion.
-     * @dev Placeholder until CoSignedNFT.sol is wired in on Day 10.
-     *      Both tokens use the bond's ipfsHash as the metadata URI.
-     *      TokenType differentiates LEARNER_PROOF vs MENTOR_PROOF in metadata.
+     * @dev Calls CoSignedNFT.mint() twice — once for learner, once for mentor.
+     *      Both tokens share the bond's ipfsHash as the metadata URI.
+     *      TokenType differentiates LEARNER_PROOF vs MENTOR_PROOF in the metadata.
      * @param bondId The completed bond ID.
      */
     function _mintSoulboundNFTs(uint256 bondId) internal {
-        // Day 10: replace with real NFT contract calls
-        // nftContract.mint(bonds[bondId].learner, TokenType.LEARNER_PROOF, bonds[bondId].ipfsHash);
-        // nftContract.mint(bonds[bondId].mentor,  TokenType.MENTOR_PROOF,  bonds[bondId].ipfsHash);
-        bondId; // suppress unused variable warning until Day 10
+        Bond storage bond = bonds[bondId];
+        nftContract.mint(bond.learner, CoSignedNFT.TokenType.LEARNER_PROOF, bond.ipfsHash);
+        nftContract.mint(bond.mentor,  CoSignedNFT.TokenType.MENTOR_PROOF,  bond.ipfsHash);
     }
 
     /**
