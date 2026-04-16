@@ -290,4 +290,34 @@ All notable changes to this project will be documented here.
 
 ---
 
-<!-- Day 11+ entries will be added here -->
+## [Day 11] — 2026-04-16
+
+### Added
+- `contracts/test/CoSigned.test.js` — 4 passing tests:
+  - Test 1: mentor creates bond — verifies bondCounter, all Bond struct fields,
+    mentorBonds/learnerBonds mappings, BondCreated event
+  - Test 2: mentor cannot create bond with themselves as learner — revertedWith
+  - Test 3: learner accepts bond with correct stake — verifies status Active,
+    stakeAmount, contract ETH balance increase, BondAccepted event
+  - Test 4: wrong address cannot accept bond — stranger reverts, mentor reverts,
+    zero stake reverts
+
+### Fixed
+- OZ v5 -> v4.9.6 downgrade: OZ v5 uses `mcopy` opcode (Cancun EVM) which
+  Hardhat's local network doesn't support without extra config
+- Solidity pragma reverted to ^0.8.20 (compatible with OZ v4)
+- Hardhat config evmVersion removed (paris is correct for OZ v4)
+- CoSignedNFT.sol updated for OZ v4 API:
+  - `_update()` -> `_beforeTokenTransfer()` for soulbound enforcement
+  - `_ownerOf()` -> `_exists()` for token existence check
+  - ReentrancyGuard import: `utils/` -> `security/`
+- Cleared Hardhat global compiler cache (`~/.cache/hardhat-nodejs`) to
+  force fresh compilation after OZ version switch
+
+### Verified
+- `npx hardhat test` -> 4 passing (6s)
+- "Compiled 18 Solidity files successfully (evm target: paris)"
+
+---
+
+<!-- Day 12+ entries will be added here -->
