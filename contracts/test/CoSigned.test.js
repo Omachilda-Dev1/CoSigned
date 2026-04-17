@@ -152,4 +152,123 @@ describe("CoSigned", function () {
     ).to.be.revertedWith("CoSigned: stake amount must be > 0");
   });
 
+  // ── Helper: create + accept a bond (used by Day 12+ tests) ─────────────────
+
+  async function createAndAcceptBond(cosigned, mentor, learner, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount) {
+    await cosigned.connect(mentor).createBond(learner.address, skillTitle, successCriteria, deadline, ipfsHash);
+    await cosigned.connect(learner).acceptBond(1, { value: stakeAmount });
+    return 1; // bondId
+  }
+
+  // ── Test 5 ─────────────────────────────────────────────────────────────────
+
+  it("5. should complete bond when both parties sign", async function () {
+    const { cosigned, mentor, learner, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount } = await deployCoSigned();
+
+    await createAndAcceptBond(cosigned, mentor, learner, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount);
+
+    // Mentor signs first
+    await cosigned.connect(mentor).signCompletion(1);
+    let bond = await cosigned.getBond(1);
+    expect(bond.status).to.equal(2n);       // BondStatus.MentorSigned = 2
+    expect(bond.mentorSigned).to.equal(true);
+    expect(bond.learnerSigned).to.equal(false);
+
+    // Learner signs second — triggers completion
+    const tx = await cosigned.connect(learner).signCompletion(1);
+    await tx.wait();
+
+    bond = await cosigned.getBond(1);
+    expect(bond.status).to.equal(4n);       // BondStatus.Completed = 4
+    expect(bond.mentorSigned).to.equal(true);
+    expect(bond.learnerSigned).to.equal(true);
+    expect(bond.stakeAmount).to.equal(0n);  // zeroed after refund
+
+    // BondCompleted event emitted
+    await expect(tx).to.emit(cosigned, "BondCompleted")
+      .withArgs(1n, mentor.address, learner.address);
+  });
+
+  it("5b. should also complete when learner signs first", async function () {
+    const { cosigned, mentor, learner, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount } = await deployCoSigned();
+
+    await createAndAcceptBond(cosigned, mentor, learner, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount);
+
+    // Learner signs first
+    await cosigned.connect(learner).signCompletion(1);
+    let bond = await cosigned.getBond(1);
+    expect(bond.status).to.equal(3n);       // BondStatus.LearnerSigned = 3
+
+    // Mentor signs second — triggers completion
+    await cosigned.connect(mentor).signCompletion(1);
+    bond = await cosigned.getBond(1);
+    expect(bond.status).to.equal(4n);       // BondStatus.Completed = 4
+  });
+
+  // ── Test 6 ─────────────────────────────────────────────────────────────────
+
+  it("6. should mint soulbound NFTs to both parties on completion", async function () {
+    const { cosigned, nft, mentor, learner, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount } = await deployCoSigned();
+
+    await createAndAcceptBond(cosigned, mentor, learner, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount);
+
+    // Both sign
+    await cosigned.connect(mentor).signCompletion(1);
+    await cosigned.connect(learner).signCompletion(1);
+
+    // Learner should own token 1 (LEARNER_PROOF — minted first)
+    expect(await nft.ownerOf(1)).to.equal(learner.address);
+    // Mentor should own token 2 (MENTOR_PROOF — minted second)
+    expect(await nft.ownerOf(2)).to.equal(mentor.address);
+
+    // Token types should be correct
+    // TokenType.LEARNER_PROOF = 0, TokenType.MENTOR_PROOF = 1
+    expect(await nft.tokenTypes(1)).to.equal(0n); // LEARNER_PROOF
+    expect(await nft.tokenTypes(2)).to.equal(1n); // MENTOR_PROOF
+
+    // Both tokens should be locked (ERC-5192)
+    expect(await nft.locked(1)).to.equal(true);
+    expect(await nft.locked(2)).to.equal(true);
+
+    // Metadata URI should match the bond's ipfsHash
+    expect(await nft.tokenURI(1)).to.equal(ipfsHash);
+    expect(await nft.tokenURI(2)).to.equal(ipfsHash);
+  });
+
+  // ── Test 7 ─────────────────────────────────────────────────────────────────
+
+  it("7. should revert transfer of soulbound NFT", async function () {
+    const { cosigned, nft, mentor, learner, stranger, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount } = await deployCoSigned();
+
+    await createAndAcceptBond(cosigned, mentor, learner, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount);
+
+    // Complete the bond to mint NFTs
+    await cosigned.connect(mentor).signCompletion(1);
+    await cosigned.connect(learner).signCompletion(1);
+
+    // Learner owns token 1 — attempt to transfer should revert
+    await expect(
+      nft.connect(learner).transferFrom(learner.address, stranger.address, 1)
+    ).to.be.revertedWith("CoSignedNFT: soulbound - non-transferable");
+
+    // Mentor owns token 2 — attempt to transfer should revert
+    await expect(
+      nft.connect(mentor).transferFrom(mentor.address, stranger.address, 2)
+    ).to.be.revertedWith("CoSignedNFT: soulbound - non-transferable");
+
+    // approve should also revert
+    await expect(
+      nft.connect(learner).approve(stranger.address, 1)
+    ).to.be.revertedWith("CoSignedNFT: soulbound - non-transferable");
+
+    // setApprovalForAll should also revert
+    await expect(
+      nft.connect(learner).setApprovalForAll(stranger.address, true)
+    ).to.be.revertedWith("CoSignedNFT: soulbound - non-transferable");
+
+    // Ownership should be unchanged
+    expect(await nft.ownerOf(1)).to.equal(learner.address);
+    expect(await nft.ownerOf(2)).to.equal(mentor.address);
+  });
+
 });

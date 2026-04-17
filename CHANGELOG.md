@@ -320,4 +320,28 @@ All notable changes to this project will be documented here.
 
 ---
 
-<!-- Day 12+ entries will be added here -->
+## [Day 12] — 2026-04-17
+
+### Added
+- `contracts/test/CoSigned.test.js` — 3 new tests (8 total, all passing):
+  - Test 5: complete bond when both parties sign — verifies MentorSigned
+    intermediate state, then Completed after second sig, stakeAmount zeroed,
+    BondCompleted event emitted
+  - Test 5b: also complete when learner signs first — verifies LearnerSigned
+    intermediate state, confirms order doesn't matter
+  - Test 6: mint soulbound NFTs to both parties on completion — verifies
+    learner owns token 1 (LEARNER_PROOF), mentor owns token 2 (MENTOR_PROOF),
+    tokenTypes mapping correct, locked() returns true, tokenURI matches ipfsHash
+  - Test 7: revert transfer of soulbound NFT — verifies transferFrom reverts
+    for both tokens, approve reverts, setApprovalForAll reverts, ownership
+    unchanged after all attempts
+
+- Helper function `createAndAcceptBond()` — reduces test boilerplate for
+  Day 12+ tests that need an Active bond
+
+### Verified
+- `npx hardhat test` -> 8 passing (6s)
+
+---
+
+<!-- Day 13+ entries will be added here -->
