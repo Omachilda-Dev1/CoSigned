@@ -29,12 +29,13 @@ describe("CoSigned", function () {
     const CoSignedNFT = await ethers.getContractFactory("CoSignedNFT");
     const nft = CoSignedNFT.attach(nftAddress);
 
-    // Shared bond parameters
-    const skillTitle       = "React State Management";
-    const successCriteria  = "Build a working Zustand store with persistence";
-    const deadline         = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30; // 30 days
-    const ipfsHash         = "QmTestHashABC123";
-    const stakeAmount      = ethers.parseEther("0.05");
+    // Use EVM block timestamp — not Date.now() — to avoid clock drift across tests
+    const block = await ethers.provider.getBlock("latest");
+    const deadline      = block.timestamp + 60 * 60 * 24 * 30; // 30 days from EVM now
+    const skillTitle    = "React State Management";
+    const successCriteria = "Build a working Zustand store with persistence";
+    const ipfsHash      = "QmTestHashABC123";
+    const stakeAmount   = ethers.parseEther("0.05");
 
     return { cosigned, nft, owner, mentor, learner, stranger, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount };
   }
@@ -269,6 +270,117 @@ describe("CoSigned", function () {
     // Ownership should be unchanged
     expect(await nft.ownerOf(1)).to.equal(learner.address);
     expect(await nft.ownerOf(2)).to.equal(mentor.address);
+  });
+
+  // ── Test 8 ─────────────────────────────────────────────────────────────────
+
+  it("8. should allow dispute if deadline has passed", async function () {
+    const { cosigned, mentor, learner, skillTitle, successCriteria, ipfsHash, stakeAmount } = await deployCoSigned();
+
+    // Get current EVM block timestamp and set deadline 300s ahead
+    // (large buffer to survive any accumulated evm_increaseTime from prior tests)
+    const block = await ethers.provider.getBlock("latest");
+    const shortDeadline = block.timestamp + 300;
+
+    await cosigned.connect(mentor).createBond(learner.address, skillTitle, successCriteria, shortDeadline, ipfsHash);
+    await cosigned.connect(learner).acceptBond(1, { value: stakeAmount });
+
+    // Jump EVM to just past the deadline
+    await ethers.provider.send("evm_setNextBlockTimestamp", [shortDeadline + 10]);
+    await ethers.provider.send("evm_mine");
+
+    // Either party can raise a dispute
+    const tx = await cosigned.connect(learner).disputeBond(1);
+    await tx.wait();
+
+    const bond = await cosigned.getBond(1);
+    expect(bond.status).to.equal(5n);              // BondStatus.Disputed = 5
+    expect(bond.disputeOpenedAt).to.be.gt(0n);     // timestamp recorded
+
+    // BondDisputed event emitted
+    await expect(tx).to.emit(cosigned, "BondDisputed");
+  });
+
+  it("8b. should NOT allow dispute before deadline", async function () {
+    const { cosigned, mentor, learner, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount } = await deployCoSigned();
+
+    await createAndAcceptBond(cosigned, mentor, learner, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount);
+
+    // Deadline is 30 days away — dispute should revert
+    await expect(
+      cosigned.connect(learner).disputeBond(1)
+    ).to.be.revertedWith("CoSigned: deadline has not passed yet");
+  });
+
+  // ── Test 9 ─────────────────────────────────────────────────────────────────
+
+  it("9. should refund stake to learner on bond completion", async function () {
+    const { cosigned, mentor, learner, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount } = await deployCoSigned();
+
+    await createAndAcceptBond(cosigned, mentor, learner, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount);
+
+    // Record learner ETH balance before completion
+    const balanceBefore = await ethers.provider.getBalance(learner.address);
+
+    // Both sign — triggers refund
+    await cosigned.connect(mentor).signCompletion(1);
+    const tx = await cosigned.connect(learner).signCompletion(1);
+    const receipt = await tx.wait();
+
+    // Calculate gas cost for learner's signCompletion call
+    const gasCost = receipt.gasUsed * receipt.gasPrice;
+
+    const balanceAfter = await ethers.provider.getBalance(learner.address);
+
+    // Learner should have received the stake back (minus gas)
+    // balanceAfter = balanceBefore - gasCost + stakeAmount
+    const expectedBalance = balanceBefore - gasCost + stakeAmount;
+    expect(balanceAfter).to.equal(expectedBalance);
+
+    // Contract balance should be 0
+    const contractBalance = await ethers.provider.getBalance(await cosigned.getAddress());
+    expect(contractBalance).to.equal(0n);
+  });
+
+  // ── Test 10 ────────────────────────────────────────────────────────────────
+
+  it("10. should NOT allow signCompletion on a disputed bond", async function () {
+    const { cosigned, mentor, learner, skillTitle, successCriteria, ipfsHash, stakeAmount } = await deployCoSigned();
+
+    // Get current EVM block timestamp and set deadline 300s ahead
+    const block = await ethers.provider.getBlock("latest");
+    const shortDeadline = block.timestamp + 300;
+
+    await cosigned.connect(mentor).createBond(learner.address, skillTitle, successCriteria, shortDeadline, ipfsHash);
+    await cosigned.connect(learner).acceptBond(1, { value: stakeAmount });
+
+    // Jump EVM past deadline and raise dispute
+    await ethers.provider.send("evm_setNextBlockTimestamp", [shortDeadline + 10]);
+    await ethers.provider.send("evm_mine");
+    await cosigned.connect(mentor).disputeBond(1);
+
+    // Bond is now Disputed — signCompletion should revert
+    await expect(
+      cosigned.connect(learner).signCompletion(1)
+    ).to.be.revertedWith("CoSigned: bond not in signable state");
+
+    await expect(
+      cosigned.connect(mentor).signCompletion(1)
+    ).to.be.revertedWith("CoSigned: bond not in signable state");
+  });
+
+  it("10b. should NOT allow same party to sign twice", async function () {
+    const { cosigned, mentor, learner, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount } = await deployCoSigned();
+
+    await createAndAcceptBond(cosigned, mentor, learner, skillTitle, successCriteria, deadline, ipfsHash, stakeAmount);
+
+    // Mentor signs once
+    await cosigned.connect(mentor).signCompletion(1);
+
+    // Mentor tries to sign again — should revert
+    await expect(
+      cosigned.connect(mentor).signCompletion(1)
+    ).to.be.revertedWith("CoSigned: mentor already signed");
   });
 
 });

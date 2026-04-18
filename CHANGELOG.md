@@ -344,4 +344,37 @@ All notable changes to this project will be documented here.
 
 ---
 
-<!-- Day 13+ entries will be added here -->
+## [Day 13] — 2026-04-18
+
+### Added
+- `contracts/test/CoSigned.test.js` — 5 new tests (13 total, all passing):
+  - Test 8: dispute allowed after deadline — uses `evm_setNextBlockTimestamp`
+    to jump EVM to exact timestamp past deadline, verifies Disputed status
+    and disputeOpenedAt recorded, BondDisputed event emitted
+  - Test 8b: dispute NOT allowed before deadline — revertedWith
+  - Test 9: stake refunded to learner on completion — tracks ETH balance
+    before/after, accounts for gas cost, verifies contract balance = 0
+  - Test 10: signCompletion reverts on disputed bond — both parties blocked
+  - Test 10b: same party cannot sign twice — "mentor already signed" revert
+
+- `scripts/deploy.js` — full deploy script:
+  - Deploys CoSigned (which internally deploys CoSignedNFT)
+  - Logs deployer address, balance, both contract addresses
+  - Saves addresses + metadata to deployments.json
+  - Prints BaseScan links and verify commands when on baseSepolia
+
+### Fixed
+- `evm_increaseTime` accumulates across tests in the same Hardhat process —
+  switched to `evm_setNextBlockTimestamp` (absolute) for time-sensitive tests
+- Fixture deadline changed from `Date.now()` to EVM `block.timestamp` to
+  avoid clock drift between JS and the Hardhat EVM
+- Background process was carrying stale EVM state — run `npx hardhat test`
+  directly (not via background process) for clean test isolation
+
+### Verified
+- `npx hardhat test` → 13 passing (3s)
+- `npx hardhat run scripts/deploy.js` → both contracts deployed, addresses saved
+
+---
+
+<!-- Day 14+ entries will be added here -->
