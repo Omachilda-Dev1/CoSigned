@@ -7,12 +7,13 @@
     "doc": "docs"
   },
   "scripts": {
-    "compile": "hardhat compile",
-    "test": "hardhat test",
-    "deploy:local": "hardhat run scripts/deploy.js --network hardhat",
+    "compile":        "hardhat compile",
+    "test":           "hardhat test",
+    "copy-abis":      "node scripts/copy-abis.js",
+    "deploy:local":   "hardhat run scripts/deploy.js --network hardhat",
     "deploy:testnet": "hardhat run scripts/deploy.js --network baseSepolia",
-    "verify": "hardhat verify --network baseSepolia",
-    "clean": "hardhat clean"
+    "verify":         "hardhat verify --network baseSepolia",
+    "clean":          "hardhat clean"
   },
   "repository": {
     "type": "git",

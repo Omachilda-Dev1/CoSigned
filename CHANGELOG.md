@@ -377,4 +377,47 @@ All notable changes to this project will be documented here.
 
 ---
 
-<!-- Day 14+ entries will be added here -->
+## [Day 14] — 2026-04-19
+
+### Added
+- `scripts/copy-abis.js` — copies compiled ABIs from artifacts/ to
+  frontend/lib/abi/ (CoSigned.json + CoSignedNFT.json). Run after compile.
+- `frontend/lib/abi/CoSigned.json` — ABI copied from artifacts
+- `frontend/lib/abi/CoSignedNFT.json` — ABI copied from artifacts
+- `frontend/lib/contract.ts` — imports real ABIs, exports addresses from
+  env vars, exports BASE_SEPOLIA_CHAIN_ID
+- `package.json` — added `copy-abis` script
+
+### Deploy Steps (run these manually)
+
+```bash
+# 1. Get Base Sepolia ETH
+# → https://faucet.base.org (connect wallet, request ETH)
+
+# 2. Set up .env
+cp .env.example .env
+# Fill in: PRIVATE_KEY, BASE_SEPOLIA_RPC_URL, BASESCAN_API_KEY
+
+# 3. Deploy to Base Sepolia
+npx hardhat run scripts/deploy.js --network baseSepolia
+
+# 4. Copy ABIs to frontend
+node scripts/copy-abis.js
+
+# 5. Verify contracts on BaseScan
+npx hardhat verify --network baseSepolia <COSIGNED_ADDRESS>
+npx hardhat verify --network baseSepolia <COSIGNED_NFT_ADDRESS> "<COSIGNED_ADDRESS>"
+
+# 6. Update .env with deployed addresses
+NEXT_PUBLIC_COSIGNED_ADDRESS=<COSIGNED_ADDRESS>
+NEXT_PUBLIC_COSIGNED_NFT_ADDRESS=<COSIGNED_NFT_ADDRESS>
+```
+
+### Pending
+- Testnet deploy (requires PRIVATE_KEY + Base Sepolia ETH in .env)
+- Contract verification on BaseScan
+- deployments.json baseSepolia addresses to be populated after deploy
+
+---
+
+<!-- Day 15+ entries will be added here -->
