@@ -414,9 +414,16 @@ NEXT_PUBLIC_COSIGNED_NFT_ADDRESS=<COSIGNED_NFT_ADDRESS>
 ```
 
 ### Pending
-- Testnet deploy (requires PRIVATE_KEY + Base Sepolia ETH in .env)
-- Contract verification on BaseScan
+- Contract verification on BaseScan (hardhat-verify V2 migration in progress — use manual UI verification)
 - deployments.json baseSepolia addresses to be populated after deploy
+
+### Deployed & Verified ✅
+- CoSigned:    `0xd1D2a913eb75B43125AA860bea1BabC27F2d550A` — [BaseScan ✅](https://sepolia.basescan.org/address/0xd1D2a913eb75B43125AA860bea1BabC27F2d550A#code)
+- CoSignedNFT: `0xC6Fce62038C0FD7f50c447a51C05492096554df5` — [BaseScan ✅](https://sepolia.basescan.org/address/0xC6Fce62038C0FD7f50c447a51C05492096554df5#code)
+- Network: Base Sepolia (chainId: 84532)
+- Deployer: `0x45410b0Aa0136E7066670F99332372B3379b2034`
+- Deploy TX: `0x093d969ed1f2a0fd39bd13441f41599350aa0fb3270ac4bd649d20ec73718f72`
+- Verification: Standard JSON-Input, v0.8.20+commit.a1b79de6, optimizer 200 runs
 
 ---
 

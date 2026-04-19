@@ -32,6 +32,11 @@ async function main() {
   const cosigned = await CoSigned.deploy();
   await cosigned.waitForDeployment();
 
+  // Wait a few extra blocks for RPC to catch up on testnet
+  console.log("Waiting for confirmations...");
+  const deployTx = cosigned.deploymentTransaction();
+  await deployTx.wait(3);
+
   const cosignedAddress = await cosigned.getAddress();
   console.log(`✓ CoSigned deployed:    ${cosignedAddress}`);
 

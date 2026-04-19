@@ -178,7 +178,10 @@ npm run dev
 
 ## Contract Addresses
 
-> Deploying to Base Sepolia on Day 14. Addresses will be listed here.
+| Contract | Network | Address |
+|---|---|---|
+| CoSigned.sol | Base Sepolia | [0xd1D2a913eb75B43125AA860bea1BabC27F2d550A](https://sepolia.basescan.org/address/0xd1D2a913eb75B43125AA860bea1BabC27F2d550A#code) ✅ |
+| CoSignedNFT.sol | Base Sepolia | [0xC6Fce62038C0FD7f50c447a51C05492096554df5](https://sepolia.basescan.org/address/0xC6Fce62038C0FD7f50c447a51C05492096554df5#code) ✅ |
 
 ---
 

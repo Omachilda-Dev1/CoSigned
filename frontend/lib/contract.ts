@@ -11,10 +11,12 @@ import CoSignedNFTABI from "./abi/CoSignedNFT.json";
 // Populated from environment variables after testnet deploy (Day 14)
 
 export const COSIGNED_ADDRESS =
-  (process.env.NEXT_PUBLIC_COSIGNED_ADDRESS as `0x${string}`) || ("" as `0x${string}`);
+  (process.env.NEXT_PUBLIC_COSIGNED_ADDRESS as `0x${string}`) ||
+  "0xd1D2a913eb75B43125AA860bea1BabC27F2d550A" as `0x${string}`;
 
 export const COSIGNED_NFT_ADDRESS =
-  (process.env.NEXT_PUBLIC_COSIGNED_NFT_ADDRESS as `0x${string}`) || ("" as `0x${string}`);
+  (process.env.NEXT_PUBLIC_COSIGNED_NFT_ADDRESS as `0x${string}`) ||
+  "0xC6Fce62038C0FD7f50c447a51C05492096554df5" as `0x${string}`;
 
 // ── ABIs ─────────────────────────────────────────────────────────────────────
 
