@@ -427,4 +427,27 @@ NEXT_PUBLIC_COSIGNED_NFT_ADDRESS=<COSIGNED_NFT_ADDRESS>
 
 ---
 
-<!-- Day 15+ entries will be added here -->
+## [Day 15] — 2026-04-20 ✅ CHECKPOINT 1
+
+### Verified
+- `npx hardhat test` → **13 passing (6s)** — full suite clean
+- Both contracts live and verified on Base Sepolia
+- Frontend running at localhost:3000
+
+### Added
+- `docs/checkpoint-1.md` — full Days 1–15 summary:
+  - All contract functions documented
+  - All 13 tests listed
+  - Deployment details
+  - Key technical decisions table
+  - What's next (Days 16–30)
+
+### Updated
+- `README.md` — 30-day roadmap status column updated:
+  - Days 1–4: ✅ Done
+  - Days 5–15: ✅ Done
+  - Days 16+: ⏳ Upcoming
+
+---
+
+<!-- Day 16+ entries will be added here -->
