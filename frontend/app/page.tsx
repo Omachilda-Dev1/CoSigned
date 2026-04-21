@@ -1,6 +1,7 @@
 import Logo from "@/components/ui/Logo";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import HeroIllustration from "@/components/ui/HeroIllustration";
+import ConnectButton from "@/components/wallet/ConnectButton";
 
 const steps = [
   {
@@ -74,16 +75,7 @@ export default function Home() {
             Base Sepolia
           </span>
 
-          <button
-            className="text-sm font-bold px-5 py-2 rounded transition-opacity hover:opacity-80"
-            style={{
-              backgroundColor: "var(--accent)",
-              color: "#0D0D0D",
-            }}
-            aria-label="Connect wallet"
-          >
-            Connect Wallet
-          </button>
+          <ConnectButton />
         </div>
       </nav>
 

@@ -1,1 +1,13 @@
-// TODO: Day 16 — Wagmi + RainbowKit config
+import { getDefaultConfig } from "@rainbow-me/rainbowkit";
+import { baseSepolia } from "wagmi/chains";
+
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "";
+
+export const wagmiConfig = getDefaultConfig({
+  appName: "CoSigned",
+  projectId,
+  chains: [baseSepolia],
+  ssr: true,
+});
+
+export { baseSepolia };

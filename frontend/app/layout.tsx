@@ -1,6 +1,13 @@
-import type { Metadata } from "next";
+"use client";
+
+import type { ReactNode } from "react";
 import { Syne, DM_Mono } from "next/font/google";
+import { WagmiProvider } from "wagmi";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
+import { wagmiConfig } from "@/lib/wagmi";
 import "./globals.css";
+import "@rainbow-me/rainbowkit/styles.css";
 
 const syne = Syne({
   subsets: ["latin"],
@@ -15,27 +22,26 @@ const dmMono = DM_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "CoSigned — Your skills. Witnessed on-chain.",
-  description:
-    "A Web3 DApp where mentors and learners co-sign skill Bonds on-chain. Permanent, verifiable proof that a real mentorship happened.",
-  keywords: ["Web3", "mentorship", "NFT", "soulbound", "Base", "blockchain"],
-  openGraph: {
-    title: "CoSigned",
-    description: "Your skills. Witnessed on-chain.",
-    type: "website",
-  },
-};
+const queryClient = new QueryClient();
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark">
       <body className={`${syne.variable} ${dmMono.variable} antialiased`}>
-        {children}
+        <WagmiProvider config={wagmiConfig}>
+          <QueryClientProvider client={queryClient}>
+            <RainbowKitProvider
+              theme={darkTheme({
+                accentColor: "#4DFFD2",
+                accentColorForeground: "#0D0D0D",
+                borderRadius: "medium",
+                fontStack: "system",
+              })}
+            >
+              {children}
+            </RainbowKitProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
       </body>
     </html>
   );

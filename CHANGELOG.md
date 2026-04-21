@@ -450,4 +450,30 @@ NEXT_PUBLIC_COSIGNED_NFT_ADDRESS=<COSIGNED_NFT_ADDRESS>
 
 ---
 
-<!-- Day 16+ entries will be added here -->
+## [Day 16] — 2026-04-21
+
+### Added
+- `frontend/lib/wagmi.ts` — Wagmi v2 + RainbowKit config:
+  - `getDefaultConfig()` with Base Sepolia chain
+  - WalletConnect Project ID from env
+  - SSR enabled
+- `frontend/app/layout.tsx` — providers wired in:
+  - `WagmiProvider` wrapping the app
+  - `QueryClientProvider` (TanStack React Query)
+  - `RainbowKitProvider` with dark theme, teal accent (#4DFFD2), dark foreground
+  - `"use client"` directive — layout is now a client component
+  - RainbowKit CSS imported
+- `frontend/app/metadata.ts` — metadata exported separately (required when layout is client component)
+- `frontend/components/wallet/ConnectButton.tsx` — custom styled wrapper:
+  - Disconnected: solid teal button "Connect Wallet"
+  - Wrong network: red outlined "Wrong Network" button
+  - Connected: chain pill + account button with teal border
+  - All states use brand CSS variables
+- `frontend/app/page.tsx` — ConnectButton wired into nav (replaces static button)
+
+### Installed
+- `wagmi@2`, `viem@2`, `@rainbow-me/rainbowkit`, `@tanstack/react-query`
+
+---
+
+<!-- Day 17+ entries will be added here -->
