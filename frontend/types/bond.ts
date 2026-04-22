@@ -1,4 +1,4 @@
-// TODO: Day 17 — TypeScript types matching Bond struct
+// Bond types — matching CoSigned.sol Bond struct exactly
 
 export enum BondStatus {
   Pending = 0,

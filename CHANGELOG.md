@@ -476,4 +476,35 @@ NEXT_PUBLIC_COSIGNED_NFT_ADDRESS=<COSIGNED_NFT_ADDRESS>
 
 ---
 
-<!-- Day 17+ entries will be added here -->
+## [Day 17] — 2026-04-22
+
+### Added
+- `frontend/hooks/useCoSigned.ts` — full contract hooks layer:
+
+  Write hooks (all return `{ write, isPending, isConfirming, isSuccess, error, txHash }`):
+  - `useCreateBond()` — calls `createBond(learner, skillTitle, successCriteria, deadline, ipfsHash)`
+  - `useAcceptBond()` — calls `acceptBond(bondId)` with ETH value via `parseEther`
+  - `useSignCompletion()` — calls `signCompletion(bondId)`
+  - `useDisputeBond()` — calls `disputeBond(bondId)`
+  - `useResolveDispute()` — calls `resolveDispute(bondId)`
+
+  Read hooks:
+  - `useBond(bondId)` — reads `getBond()`, maps raw tuple to typed `Bond`
+  - `useUserBonds(address)` — reads `getBondsByAddress()`, returns `bigint[]`
+  - `useBondCounter()` — reads `bondCounter()` for live stats
+
+  Utilities:
+  - `useConnectedAddress()` — returns connected wallet address
+  - `usePartyRole(bond)` — returns `{ isMentor, isLearner, isParty }` for connected wallet
+
+- `frontend/types/bond.ts` — TODO comment removed, types are live
+
+### Design decisions
+- `isPending` = wallet signature pending, `isConfirming` = tx in mempool
+- `mapBond()` helper converts raw wagmi tuple response to typed `Bond`
+- All hooks use `query: { enabled }` to skip reads when args are undefined
+- Pages never import wagmi directly — all contract interaction goes through these hooks
+
+---
+
+<!-- Day 18+ entries will be added here -->
