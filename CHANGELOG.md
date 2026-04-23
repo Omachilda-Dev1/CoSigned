@@ -507,4 +507,26 @@ NEXT_PUBLIC_COSIGNED_NFT_ADDRESS=<COSIGNED_NFT_ADDRESS>
 
 ---
 
-<!-- Day 18+ entries will be added here -->
+## [Day 18] — 2026-04-23
+
+### Added / Updated
+- `frontend/app/page.tsx` — landing page upgraded:
+  - `"use client"` — page is now a client component
+  - Live `bondCounter` stat from contract via `useBondCounter()` hook
+  - Framer Motion stagger animation on hero copy (fadeUp, 0.08s stagger)
+  - Framer Motion whileInView stagger on How It Works rows (triggers on scroll)
+  - Framer Motion whileInView stagger on Why CoSigned cards
+  - Hero illustration slides in from right (x: 20 → 0, 0.6s delay)
+  - "Start a Bond" buttons → `router.push("/bond/create")`
+  - "Explore Bonds" button → `router.push("/explore")`
+  - CTA "Start a Bond Today" → `router.push("/bond/create")`
+
+### Installed
+- `framer-motion`
+
+### Fixed
+- Framer Motion `Variants` type requires cubic-bezier array for ease, not plain string
+
+---
+
+<!-- Day 19+ entries will be added here -->

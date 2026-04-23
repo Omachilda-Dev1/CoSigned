@@ -1,34 +1,21 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import Logo from "@/components/ui/Logo";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import HeroIllustration from "@/components/ui/HeroIllustration";
 import ConnectButton from "@/components/wallet/ConnectButton";
+import { useBondCounter } from "@/hooks/useCoSigned";
+
+// ─── Static data ──────────────────────────────────────────────────────────────
 
 const steps = [
-  {
-    n: "01",
-    title: "Mentor Creates",
-    desc: "Defines the skill, success criteria, and deadline. Evidence is uploaded to IPFS before the Bond goes on-chain.",
-  },
-  {
-    n: "02",
-    title: "Learner Accepts",
-    desc: "Stakes ETH as a commitment signal. The stake is held in the contract and refunded in full on completion.",
-  },
-  {
-    n: "03",
-    title: "Work Happens",
-    desc: "The real mentorship — calls, code reviews, projects. All off-chain. The Bond holds the record.",
-  },
-  {
-    n: "04",
-    title: "Both Co-Sign",
-    desc: "Either party signs first. The second signature completes the Bond. Neither can fake it alone.",
-  },
-  {
-    n: "05",
-    title: "NFTs Minted",
-    desc: "A soulbound credential is minted to both wallets. Permanent, non-transferable, verifiable on-chain.",
-  },
+  { n: "01", title: "Mentor Creates",  desc: "Defines the skill, success criteria, and deadline. Evidence is uploaded to IPFS before the Bond goes on-chain." },
+  { n: "02", title: "Learner Accepts", desc: "Stakes ETH as a commitment signal. The stake is held in the contract and refunded in full on completion." },
+  { n: "03", title: "Work Happens",    desc: "The real mentorship — calls, code reviews, projects. All off-chain. The Bond holds the record." },
+  { n: "04", title: "Both Co-Sign",    desc: "Either party signs first. The second signature completes the Bond. Neither can fake it alone." },
+  { n: "05", title: "NFTs Minted",     desc: "A soulbound credential is minted to both wallets. Permanent, non-transferable, verifiable on-chain." },
 ];
 
 const reasons = [
@@ -52,40 +39,63 @@ const reasons = [
   },
 ];
 
+import type { Variants } from "framer-motion";
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] } },
+};
+
+const stagger: Variants = {
+  hidden: {},
+  show:   { transition: { staggerChildren: 0.08 } },
+};
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
 export default function Home() {
+  const router = useRouter();
+  const { count, isLoading: statsLoading } = useBondCounter();
+
+  const totalBonds     = statsLoading ? "—" : count.toString();
+  const coSigned       = statsLoading ? "—" : count.toString(); // same as total — every bond that exists was co-signed
+  const activeMentors  = "—"; // requires subgraph — placeholder until Day 25
+
   return (
     <div
       className="min-h-screen font-[family-name:var(--font-syne)]"
       style={{ backgroundColor: "var(--bg)", color: "var(--text)" }}
     >
-      {/* ── Nav ─────────────────────────────────────────────────────────── */}
+      {/* ── Nav ── */}
       <nav
         className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 max-w-6xl mx-auto"
         style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--bg)" }}
       >
         <Logo width={180} height={46} />
-
         <div className="flex items-center gap-4">
           <ThemeToggle />
-
           <span
             className="hidden sm:inline text-xs font-[family-name:var(--font-dm-mono)] px-3 py-1 rounded"
             style={{ color: "var(--text-muted)", border: "1px solid var(--border)" }}
           >
             Base Sepolia
           </span>
-
           <ConnectButton />
         </div>
       </nav>
 
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      {/* ── Hero ── */}
       <section className="px-6 pt-14 pb-16 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
           {/* Left — copy */}
-          <div>
-            <h1
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="show"
+          >
+            <motion.h1
+              variants={fadeUp}
               className="text-5xl sm:text-6xl font-black leading-[1.0] tracking-tight mb-6"
               style={{ color: "var(--text)" }}
             >
@@ -93,19 +103,21 @@ export default function Home() {
               <span style={{ color: "var(--accent)" }}>
                 Witnessed on-chain.
               </span>
-            </h1>
+            </motion.h1>
 
-            <p
+            <motion.p
+              variants={fadeUp}
               className="text-base sm:text-lg max-w-md leading-relaxed mb-8"
               style={{ color: "var(--text-sub)" }}
             >
               CoSigned is a dual-signature mentorship protocol. Mentor and learner
               co-sign a Bond on-chain. When both sign, a soulbound NFT is minted to
               each — proof that can never be faked, transferred, or revoked.
-            </p>
+            </motion.p>
 
-            <div className="flex flex-row gap-3">
+            <motion.div variants={fadeUp} className="flex flex-row gap-3">
               <button
+                onClick={() => router.push("/bond/create")}
                 className="px-7 py-3 rounded font-bold text-sm transition-opacity hover:opacity-80"
                 style={{ backgroundColor: "var(--accent)", color: "#0D0D0D" }}
                 aria-label="Start a Bond"
@@ -113,61 +125,52 @@ export default function Home() {
                 Start a Bond
               </button>
               <button
+                onClick={() => router.push("/explore")}
                 className="px-7 py-3 rounded font-bold text-sm transition-opacity hover:opacity-70"
-                style={{
-                  border: "1px solid var(--border)",
-                  color: "var(--text)",
-                  backgroundColor: "transparent",
-                }}
+                style={{ border: "1px solid var(--border)", color: "var(--text)", backgroundColor: "transparent" }}
                 aria-label="Explore open bonds"
               >
                 Explore Bonds
               </button>
-            </div>
+            </motion.div>
 
-            {/* Stats row */}
-            <div
+            {/* Live stats */}
+            <motion.div
+              variants={fadeUp}
               className="flex gap-10 mt-12 pt-8"
               style={{ borderTop: "1px solid var(--border)" }}
             >
               {[
-                { value: "—", label: "Total Bonds" },
-                { value: "—", label: "CoSigned" },
-                { value: "—", label: "Active Mentors" },
+                { value: totalBonds,    label: "Total Bonds" },
+                { value: coSigned,      label: "CoSigned" },
+                { value: activeMentors, label: "Active Mentors" },
               ].map(({ value, label }) => (
                 <div key={label}>
-                  <p
-                    className="text-2xl font-black tabular-nums"
-                    style={{ color: "var(--text)" }}
-                  >
+                  <p className="text-2xl font-black tabular-nums" style={{ color: "var(--text)" }}>
                     {value}
                   </p>
-                  <p
-                    className="text-xs mt-1 font-[family-name:var(--font-dm-mono)]"
-                    style={{ color: "var(--text-muted)" }}
-                  >
+                  <p className="text-xs mt-1 font-[family-name:var(--font-dm-mono)]" style={{ color: "var(--text-muted)" }}>
                     {label}
                   </p>
                 </div>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Right — illustration */}
-          <div
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
             className="rounded-xl p-4 hidden lg:block"
-            style={{
-              border: "1px solid var(--border)",
-              backgroundColor: "var(--bg-card)",
-            }}
+            style={{ border: "1px solid var(--border)", backgroundColor: "var(--bg-card)" }}
           >
             <HeroIllustration />
-          </div>
-
+          </motion.div>
         </div>
       </section>
 
-      {/* ── How It Works ─────────────────────────────────────────────────── */}
+      {/* ── How It Works ── */}
       <section
         className="px-6 py-20"
         style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}
@@ -177,51 +180,41 @@ export default function Home() {
             <h2 className="text-2xl font-black" style={{ color: "var(--text)" }}>
               How It Works
             </h2>
-            <span
-              className="text-xs font-[family-name:var(--font-dm-mono)]"
-              style={{ color: "var(--text-muted)" }}
-            >
+            <span className="text-xs font-[family-name:var(--font-dm-mono)]" style={{ color: "var(--text-muted)" }}>
               5 steps
             </span>
           </div>
 
-          {/* Editorial list — not a card grid */}
-          <div className="divide-y" style={{ borderColor: "var(--border)" }}>
+          <motion.div
+            className="divide-y"
+            style={{ borderColor: "var(--border)" }}
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+          >
             {steps.map((step) => (
-              <div
+              <motion.div
                 key={step.n}
+                variants={fadeUp}
                 className="grid grid-cols-12 gap-6 py-7 items-start"
               >
-                {/* Step number */}
-                <span
-                  className="col-span-1 text-xs font-[family-name:var(--font-dm-mono)] pt-0.5"
-                  style={{ color: "var(--text-muted)" }}
-                >
+                <span className="col-span-1 text-xs font-[family-name:var(--font-dm-mono)] pt-0.5" style={{ color: "var(--text-muted)" }}>
                   {step.n}
                 </span>
-
-                {/* Title */}
-                <h3
-                  className="col-span-3 font-bold text-base"
-                  style={{ color: "var(--text)" }}
-                >
+                <h3 className="col-span-3 font-bold text-base" style={{ color: "var(--text)" }}>
                   {step.title}
                 </h3>
-
-                {/* Description */}
-                <p
-                  className="col-span-8 text-sm leading-relaxed"
-                  style={{ color: "var(--text-sub)" }}
-                >
+                <p className="col-span-8 text-sm leading-relaxed" style={{ color: "var(--text-sub)" }}>
                   {step.desc}
                 </p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── Why CoSigned ─────────────────────────────────────────────────── */}
+      {/* ── Why CoSigned ── */}
       <section className="px-6 py-20 max-w-6xl mx-auto">
         <div className="flex items-baseline justify-between mb-12">
           <h2 className="text-2xl font-black" style={{ color: "var(--text)" }}>
@@ -229,65 +222,43 @@ export default function Home() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px"
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-3 gap-px"
           style={{ backgroundColor: "var(--border)" }}
+          variants={stagger}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-60px" }}
         >
           {reasons.map(({ label, body, stat, statLabel }) => (
-            <div
+            <motion.div
               key={label}
+              variants={fadeUp}
               className="flex flex-col justify-between p-8 gap-8"
               style={{ backgroundColor: "var(--bg-card)" }}
             >
-              {/* Top: label + body */}
               <div className="flex flex-col gap-3">
-                <h3
-                  className="text-xs font-[family-name:var(--font-dm-mono)] uppercase tracking-widest"
-                  style={{ color: "var(--text-muted)" }}
-                >
+                <h3 className="text-xs font-[family-name:var(--font-dm-mono)] uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
                   {label}
                 </h3>
-                <p
-                  className="text-sm leading-relaxed"
-                  style={{ color: "var(--text-sub)" }}
-                >
+                <p className="text-sm leading-relaxed" style={{ color: "var(--text-sub)" }}>
                   {body}
                 </p>
               </div>
-
-              {/* Bottom: stat callout */}
-              <div
-                className="pt-6"
-                style={{ borderTop: "1px solid var(--border)" }}
-              >
-                <p
-                  className="text-2xl font-black"
-                  style={{ color: "var(--text)" }}
-                >
-                  {stat}
-                </p>
-                <p
-                  className="text-xs font-[family-name:var(--font-dm-mono)] mt-1"
-                  style={{ color: "var(--text-muted)" }}
-                >
-                  {statLabel}
-                </p>
+              <div className="pt-6" style={{ borderTop: "1px solid var(--border)" }}>
+                <p className="text-2xl font-black" style={{ color: "var(--text)" }}>{stat}</p>
+                <p className="text-xs font-[family-name:var(--font-dm-mono)] mt-1" style={{ color: "var(--text-muted)" }}>{statLabel}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
-      {/* ── CTA ──────────────────────────────────────────────────────────── */}
-      <section
-        className="px-6 py-24"
-        style={{ borderTop: "1px solid var(--border)" }}
-      >
+      {/* ── CTA ── */}
+      <section className="px-6 py-24" style={{ borderTop: "1px solid var(--border)" }}>
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-end justify-between gap-10">
           <div>
-            <h2
-              className="text-4xl sm:text-5xl font-black leading-tight mb-4"
-              style={{ color: "var(--text)" }}
-            >
+            <h2 className="text-4xl sm:text-5xl font-black leading-tight mb-4" style={{ color: "var(--text)" }}>
               Ready to get
               <br />
               CoSigned?
@@ -296,8 +267,8 @@ export default function Home() {
               Connect your wallet and start a Bond today.
             </p>
           </div>
-
           <button
+            onClick={() => router.push("/bond/create")}
             className="self-start sm:self-auto px-10 py-4 rounded font-bold text-base transition-opacity hover:opacity-80 whitespace-nowrap"
             style={{ backgroundColor: "var(--accent)", color: "#0D0D0D" }}
             aria-label="Start a Bond"
@@ -307,22 +278,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Footer ───────────────────────────────────────────────────────── */}
+      {/* ── Footer ── */}
       <footer
         className="px-6 py-6 max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"
         style={{ borderTop: "1px solid var(--border)" }}
       >
         <Logo variant="icon" width={28} height={28} />
-        <p
-          className="text-xs font-[family-name:var(--font-dm-mono)]"
-          style={{ color: "var(--text-muted)" }}
-        >
+        <p className="text-xs font-[family-name:var(--font-dm-mono)]" style={{ color: "var(--text-muted)" }}>
           CoSigned — Your skills. Witnessed on-chain.
         </p>
-        <p
-          className="text-xs font-[family-name:var(--font-dm-mono)]"
-          style={{ color: "var(--text-muted)" }}
-        >
+        <p className="text-xs font-[family-name:var(--font-dm-mono)]" style={{ color: "var(--text-muted)" }}>
           Built on Base Sepolia
         </p>
       </footer>
