@@ -2,40 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Base ─────────────────────────────────────────────────────────────────── */
+/* ── Light mode — warm off-white, strong contrast ─────────────────────────── */
 :root {
-  --bg:           #E8E4DC;
-  --bg-card:      #DEDAD2;
-  --bg-card-alt:  #D4D0C8;
-  --border:       #C4C0B8;
-  --text:         #1A1A1A;
-  --text-sub:     #4a4844;
-  --text-muted:   #7a7670;
-  --accent:       #4DFFD2;
-  --accent-2:     #C8FF4D;
-  --lock-gold:    #E8C84D;
+  --bg:           #F0EDE6;
+  --bg-card:      #E8E4DC;
+  --bg-card-alt:  #DDD9D0;
+  --border:       #B8B4AA;
+  --text:         #0F0F0F;
+  --text-sub:     #3A3835;
+  --text-muted:   #6E6A64;
+  --accent:       #00C9A7;
+  --accent-2:     #A8D400;
+  --lock-gold:    #D4A800;
+  --nav-bg:       rgba(240, 237, 230, 0.92);
 }
 
+/* ── Dark mode — true black, punchy contrast ──────────────────────────────── */
 .dark {
-  --bg:           #0D0D0D;
-  --bg-card:      #141414;
-  --bg-card-alt:  #1c1c1c;
-  --border:       #2a2a2a;
-  --text:         #F5F0E8;
-  --text-sub:     #a09c96;
-  --text-muted:   #6B7280;
+  --bg:           #080808;
+  --bg-card:      #111111;
+  --bg-card-alt:  #1A1A1A;
+  --border:       #2E2E2E;
+  --text:         #F2EEE8;
+  --text-sub:     #B0ABA4;
+  --text-muted:   #6B6760;
   --accent:       #4DFFD2;
   --accent-2:     #C8FF4D;
   --lock-gold:    #E8C84D;
+  --nav-bg:       rgba(8, 8, 8, 0.92);
+}
+
+/* ── Base reset ───────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 html {
   background-color: var(--bg);
   color: var(--text);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.18s ease, color 0.18s ease;
 }
 
 body {
   background-color: var(--bg);
   color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Nav backdrop blur ────────────────────────────────────────────────────── */
+nav[style*="sticky"] {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: var(--nav-bg) !important;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Selection ────────────────────────────────────────────────────────────── */
+::selection {
+  background: var(--accent);
+  color: #080808;
 }

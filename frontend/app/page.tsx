@@ -1,12 +1,15 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAccount } from "wagmi";
 import { motion } from "framer-motion";
 import Logo from "@/components/ui/Logo";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import HeroIllustration from "@/components/ui/HeroIllustration";
 import ConnectButton from "@/components/wallet/ConnectButton";
 import { useBondCounter } from "@/hooks/useCoSigned";
+import type { Variants } from "framer-motion";
 
 // ─── Static data ──────────────────────────────────────────────────────────────
 
@@ -39,8 +42,6 @@ const reasons = [
   },
 ];
 
-import type { Variants } from "framer-motion";
-
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
   show:   { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] } },
@@ -56,6 +57,16 @@ const stagger: Variants = {
 export default function Home() {
   const router = useRouter();
   const { count, isLoading: statsLoading } = useBondCounter();
+  const { address } = useAccount();
+
+  // Auto-redirect to dashboard when wallet connects
+  useEffect(() => {
+    if (address) {
+      router.push("/dashboard");
+    }
+  }, [address, router]);
+
+  // Stats
 
   const totalBonds     = statsLoading ? "—" : count.toString();
   const coSigned       = statsLoading ? "—" : count.toString(); // same as total — every bond that exists was co-signed
@@ -80,6 +91,14 @@ export default function Home() {
           >
             Base Sepolia
           </span>
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="hidden sm:inline text-xs font-[family-name:var(--font-dm-mono)] px-3 py-1 rounded transition-colors hover:opacity-80"
+            style={{ color: "var(--text-muted)", border: "1px solid var(--border)", background: "transparent", cursor: "pointer" }}
+            aria-label="Go to dashboard"
+          >
+            Dashboard
+          </button>
           <ConnectButton />
         </div>
       </nav>

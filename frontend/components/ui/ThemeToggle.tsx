@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 function SunIcon() {
   return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <circle cx="12" cy="12" r="4"/>
       <line x1="12" y1="2" x2="12" y2="4"/>
       <line x1="12" y1="20" x2="12" y2="22"/>
@@ -20,7 +20,7 @@ function SunIcon() {
 
 function MoonIcon() {
   return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
     </svg>
   );
@@ -44,18 +44,27 @@ export default function ThemeToggle() {
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: "6px",
-        padding: "6px 10px",
-        borderRadius: "6px",
+        gap: 7,
+        padding: "7px 13px",
+        borderRadius: 8,
         border: "1px solid var(--border)",
         backgroundColor: "var(--bg-card)",
-        color: "var(--text-muted)",
+        color: "var(--text-sub)",
         cursor: "pointer",
-        transition: "border-color 0.15s, background-color 0.15s",
-        fontSize: "11px",
-        fontFamily: "var(--font-dm-mono), monospace",
-        letterSpacing: "0.04em",
+        transition: "border-color 0.15s, color 0.15s",
+        fontSize: 12,
+        fontFamily: "var(--font-dm-mono, monospace)",
+        letterSpacing: "0.03em",
         userSelect: "none",
+        whiteSpace: "nowrap",
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.borderColor = "var(--accent)";
+        e.currentTarget.style.color = "var(--text)";
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.borderColor = "var(--border)";
+        e.currentTarget.style.color = "var(--text-sub)";
       }}
     >
       {dark ? <SunIcon /> : <MoonIcon />}

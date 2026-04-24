@@ -1,4 +1,364 @@
-// TODO: Day 19 — Dashboard page
-export default function Dashboard() {
-  return <main>Dashboard</main>;
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useAccount } from "wagmi";
+import WalletGuard from "@/components/wallet/WalletGuard";
+import BondCard from "@/components/bond/BondCard";
+import Logo from "@/components/ui/Logo";
+import ConnectButton from "@/components/wallet/ConnectButton";
+import ThemeToggle from "@/components/ui/ThemeToggle";
+import { useUserBonds, useBond, useBondCounter } from "@/hooks/useCoSigned";
+
+// ─── Skeleton card ────────────────────────────────────────────────────────────
+
+function SkeletonCard() {
+  return (
+    <div style={{
+      height: 110,
+      borderRadius: 12,
+      border: "1px solid var(--border)",
+      backgroundColor: "var(--bg-card)",
+      position: "relative",
+      overflow: "hidden",
+    }}>
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "linear-gradient(90deg, transparent 0%, var(--bg-card-alt) 50%, transparent 100%)",
+        animation: "shimmer 1.6s infinite",
+      }} />
+      <style>{`@keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }`}</style>
+    </div>
+  );
+}
+
+// ─── Bond loader ──────────────────────────────────────────────────────────────
+
+function BondCardLoader({ bondId, role }: { bondId: bigint; role: "mentor" | "learner" }) {
+  const { bond, isLoading } = useBond(bondId);
+  if (isLoading) return <SkeletonCard />;
+  if (!bond || bond.id === 0n) return null;
+  return <BondCard bond={bond} role={role} />;
+}
+
+// ─── Empty state ──────────────────────────────────────────────────────────────
+
+function EmptyState({ role, onAction }: { role: "mentor" | "learner"; onAction: () => void }) {
+  const isMentor = role === "mentor";
+  return (
+    <div style={{
+      padding: "52px 32px",
+      borderRadius: 16,
+      border: "1px dashed var(--border)",
+      textAlign: "center",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: 14,
+      backgroundColor: "var(--bg-card)",
+    }}>
+      {/* Icon */}
+      <div style={{
+        width: 48, height: 48, borderRadius: "50%",
+        backgroundColor: "var(--bg-card-alt)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        marginBottom: 4,
+      }}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          {isMentor
+            ? <><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>
+            : <><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></>
+          }
+        </svg>
+      </div>
+
+      <div>
+        <p style={{ fontFamily: "var(--font-syne, sans-serif)", fontSize: 15, fontWeight: 700, color: "var(--text)", marginBottom: 6 }}>
+          {isMentor ? "No bonds yet" : "No learning bonds yet"}
+        </p>
+        <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.7, maxWidth: 220 }}>
+          {isMentor
+            ? "Create your first bond and start mentoring someone on-chain."
+            : "Browse open bonds and accept one to start learning."}
+        </p>
+      </div>
+
+      <button
+        onClick={onAction}
+        style={{
+          marginTop: 4,
+          fontFamily: "var(--font-dm-mono, monospace)",
+          fontSize: 12, fontWeight: 700,
+          padding: "9px 22px",
+          borderRadius: 8,
+          border: isMentor ? "none" : "1px solid var(--border)",
+          color: isMentor ? "#080808" : "var(--text)",
+          backgroundColor: isMentor ? "var(--accent)" : "transparent",
+          cursor: "pointer",
+          transition: "opacity 0.15s",
+        }}
+        onMouseEnter={e => (e.currentTarget.style.opacity = "0.8")}
+        onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+      >
+        {isMentor ? "Create a Bond" : "Explore Bonds"}
+      </button>
+    </div>
+  );
+}
+
+// ─── Stat pill ────────────────────────────────────────────────────────────────
+
+function StatPill({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div style={{
+      display: "flex", flexDirection: "column", gap: 4,
+      padding: "16px 24px",
+      borderRadius: 12,
+      border: `1px solid ${accent ? "var(--accent)" : "var(--border)"}`,
+      backgroundColor: accent ? "rgba(77,255,210,0.06)" : "var(--bg-card)",
+      minWidth: 120,
+    }}>
+      <span style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+        {label}
+      </span>
+      <span style={{ fontFamily: "var(--font-syne, sans-serif)", fontSize: 26, fontWeight: 800, color: accent ? "var(--accent)" : "var(--text)", letterSpacing: "-0.02em", lineHeight: 1 }}>
+        {value}
+      </span>
+    </div>
+  );
+}
+
+// ─── Bond panel ───────────────────────────────────────────────────────────────
+
+function BondPanel({ title, subtitle, bondIds, role, isLoading, onAction }: {
+  title: string;
+  subtitle: string;
+  bondIds: bigint[];
+  role: "mentor" | "learner";
+  isLoading: boolean;
+  onAction: () => void;
+}) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+      {/* Panel header */}
+      <div style={{
+        display: "flex", alignItems: "flex-end", justifyContent: "space-between",
+        marginBottom: 20,
+      }}>
+        <div>
+          <h2 style={{
+            fontFamily: "var(--font-syne, sans-serif)",
+            fontWeight: 700, fontSize: 17,
+            color: "var(--text)", letterSpacing: "-0.01em",
+            marginBottom: 3,
+          }}>
+            {title}
+          </h2>
+          <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11, color: "var(--text-muted)" }}>
+            {subtitle}
+          </p>
+        </div>
+        {!isLoading && bondIds.length > 0 && (
+          <span style={{
+            fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11,
+            color: "var(--accent)",
+            backgroundColor: "rgba(77,255,210,0.1)",
+            border: "1px solid rgba(77,255,210,0.2)",
+            borderRadius: 999, padding: "3px 10px",
+          }}>
+            {bondIds.length} active
+          </span>
+        )}
+      </div>
+
+      {/* Content */}
+      {isLoading ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <SkeletonCard /><SkeletonCard />
+        </div>
+      ) : bondIds.length === 0 ? (
+        <EmptyState role={role} onAction={onAction} />
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {bondIds.map(id => (
+            <BondCardLoader key={id.toString()} bondId={id} role={role} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Dashboard inner ──────────────────────────────────────────────────────────
+
+function DashboardInner() {
+  const router = useRouter();
+  const { address } = useAccount();
+  const { bondIds, isLoading } = useUserBonds(address);
+  const { count } = useBondCounter();
+
+  const halfLen    = Math.ceil(bondIds.length / 2);
+  const mentorIds  = bondIds.slice(0, halfLen);
+  const learnerIds = bondIds.slice(halfLen);
+
+  const shortAddr = address ? `${address.slice(0, 6)}…${address.slice(-4)}` : "";
+
+  return (
+    <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)", color: "var(--text)" }}>
+
+      {/* ── Nav ── */}
+      <nav style={{
+        position: "sticky", top: 0, zIndex: 50,
+        borderBottom: "1px solid var(--border)",
+        backgroundColor: "var(--nav-bg)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+      }}>
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "14px 40px", maxWidth: 1280, margin: "0 auto",
+        }}>
+          <button
+            onClick={() => router.push("/")}
+            style={{ background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 0 }}
+            aria-label="Go to home"
+          >
+            <Logo width={156} height={40} />
+          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <button
+              onClick={() => router.push("/bond/create")}
+              style={{
+                fontFamily: "var(--font-dm-mono, monospace)", fontSize: 12, fontWeight: 700,
+                padding: "8px 18px", borderRadius: 8,
+                backgroundColor: "var(--accent)", color: "#080808",
+                border: "none", cursor: "pointer", transition: "opacity 0.15s",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
+              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+            >
+              + New Bond
+            </button>
+            <ThemeToggle />
+            <ConnectButton />
+          </div>
+        </div>
+      </nav>
+
+      {/* ── Page ── */}
+      <main style={{ maxWidth: 1280, margin: "0 auto", padding: "48px 40px 80px" }}>
+
+        {/* ── Page header ── */}
+        <div style={{ marginBottom: 40 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
+            <h1 style={{
+              fontFamily: "var(--font-syne, sans-serif)",
+              fontWeight: 800, fontSize: 32,
+              color: "var(--text)", letterSpacing: "-0.025em",
+              margin: 0,
+            }}>
+              My Bonds
+            </h1>
+          </div>
+          <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 12, color: "var(--text-muted)" }}>
+            {shortAddr} · Base Sepolia
+          </p>
+        </div>
+
+        {/* ── Stats row ── */}
+        <div style={{ display: "flex", gap: 12, marginBottom: 48, flexWrap: "wrap" }}>
+          <StatPill label="Total Bonds" value={count.toString()} accent />
+          <StatPill label="Mentoring" value={mentorIds.length.toString()} />
+          <StatPill label="Learning" value={learnerIds.length.toString()} />
+        </div>
+
+        {/* ── Divider with label ── */}
+        <div style={{
+          display: "flex", alignItems: "center", gap: 16, marginBottom: 32,
+        }}>
+          <div style={{ flex: 1, height: 1, backgroundColor: "var(--border)" }} />
+          <span style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.12em", whiteSpace: "nowrap" }}>
+            Your Activity
+          </span>
+          <div style={{ flex: 1, height: 1, backgroundColor: "var(--border)" }} />
+        </div>
+
+        {/* ── Two-column panels ── */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
+          <BondPanel
+            title="Bonds I'm Mentoring"
+            subtitle="Skills you're teaching on-chain"
+            bondIds={mentorIds}
+            role="mentor"
+            isLoading={isLoading}
+            onAction={() => router.push("/bond/create")}
+          />
+          <BondPanel
+            title="Bonds I'm Learning"
+            subtitle="Skills you're acquiring on-chain"
+            bondIds={learnerIds}
+            role="learner"
+            isLoading={isLoading}
+            onAction={() => router.push("/explore")}
+          />
+        </div>
+
+      </main>
+
+      <style>{`
+        @media (max-width: 768px) {
+          main { padding: 32px 20px 60px !important; }
+          nav > div { padding: 12px 20px !important; }
+          div[style*="grid-template-columns: 1fr 1fr"] {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+          }
+        }
+      `}</style>
+
+      {/* ── Footer ── */}
+      <footer style={{
+        borderTop: "1px solid var(--border)",
+        backgroundColor: "var(--bg)",
+      }}>
+        <div style={{
+          maxWidth: 1280, margin: "0 auto",
+          padding: "20px 40px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          flexWrap: "wrap", gap: 12,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Logo variant="icon" width={22} height={22} />
+            <span style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11, color: "var(--text-muted)" }}>
+              CoSigned — Your skills. Witnessed on-chain.
+            </span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+            <a
+              href="https://sepolia.basescan.org/address/0xd1D2a913eb75B43125AA860bea1BabC27F2d550A"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11, color: "var(--text-muted)", textDecoration: "none" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "var(--accent)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}
+            >
+              BaseScan ↗
+            </a>
+            <span style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11, color: "var(--text-muted)" }}>
+              Base Sepolia · Chain 84532
+            </span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+// ─── Export ───────────────────────────────────────────────────────────────────
+
+export default function DashboardPage() {
+  return (
+    <WalletGuard>
+      <DashboardInner />
+    </WalletGuard>
+  );
 }

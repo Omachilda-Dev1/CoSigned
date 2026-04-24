@@ -529,4 +529,37 @@ NEXT_PUBLIC_COSIGNED_NFT_ADDRESS=<COSIGNED_NFT_ADDRESS>
 
 ---
 
-<!-- Day 19+ entries will be added here -->
+## [Day 19] — 2026-04-24
+
+### Added
+- `frontend/components/ui/StatusBadge.tsx` — bond status badge:
+  - 6 states with distinct colors: Pending (yellow), Active (teal),
+    MentorSigned/LearnerSigned (orange), Completed (teal), Disputed (red)
+  - sm and md size variants
+  - Pill shape with matching border and background tint
+
+- `frontend/components/bond/BondCard.tsx` — bond card for dashboard:
+  - Shows: skill title, counterparty address (truncated), StatusBadge,
+    deadline countdown (Xd/Xh remaining), bond ID
+  - Navigates to `/bond/[id]` on click
+  - Hover: border color transitions to accent teal
+  - Handles expired, completed, and disputed states in deadline label
+
+- `frontend/components/wallet/WalletGuard.tsx` — wallet connection guard:
+  - Redirects to `/` if wallet not connected
+  - Shows "Connecting…" during wagmi hydration
+  - Renders nothing during redirect to avoid flash
+
+- `frontend/app/dashboard/page.tsx` — full dashboard:
+  - Wrapped in WalletGuard
+  - Two panels: "Bonds I'm Mentoring" + "Bonds I'm Learning"
+  - Reads bond IDs via `useUserBonds(address)` hook
+  - Each bond loaded individually via `BondCardLoader` → `useBond(bondId)`
+  - Skeleton loading states while bonds fetch
+  - Empty state with "Create a Bond" CTA for mentor panel
+  - Sticky nav with Logo, ThemeToggle, ConnectButton
+  - Mobile responsive (single column on small screens)
+
+---
+
+<!-- Day 20+ entries will be added here -->
