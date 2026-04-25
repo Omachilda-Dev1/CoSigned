@@ -562,4 +562,33 @@ NEXT_PUBLIC_COSIGNED_NFT_ADDRESS=<COSIGNED_NFT_ADDRESS>
 
 ---
 
-<!-- Day 20+ entries will be added here -->
+## [Day 20] — 2026-04-25
+
+### Added
+- `frontend/lib/pinata.ts` — IPFS upload helper:
+  - `uploadBondMetadata(metadata)` — POSTs JSON to Pinata API, returns `ipfs://CID`
+  - Falls back to placeholder CID if `NEXT_PUBLIC_PINATA_JWT` not set (safe for testnet)
+  - `buildBondMetadata()` — constructs the NFT metadata JSON with all 6 attributes
+
+- `frontend/app/bond/create/page.tsx` — full Create Bond page:
+  - React Hook Form + Zod validation:
+    - `learnerAddress` — required, validated as `0x` + 40 hex chars
+    - `skillTitle` — required, 3–100 chars
+    - `successCriteria` — required, 10–500 chars
+    - `deadline` — required, must be in the future
+  - Transaction lifecycle: uploading → pending → confirming → success → error
+  - `TxBanner` component shows state with BaseScan TX link
+  - On success: redirects to `/bond/[newBondId]` after 2 seconds
+  - Submit button disabled when wallet not connected or tx in flight
+  - Back arrow to dashboard
+  - Sticky certificate preview updates live as user types
+  - Full nav + footer matching dashboard design
+  - Focus ring on inputs (teal glow)
+  - Mobile responsive (single column below 900px)
+
+### Installed
+- `react-hook-form`, `@hookform/resolvers`
+
+---
+
+<!-- Day 21+ entries will be added here -->
