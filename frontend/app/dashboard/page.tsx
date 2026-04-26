@@ -137,33 +137,40 @@ function BondPanel({ title, subtitle, bondIds, role, isLoading, onAction }: {
   isLoading: boolean;
   onAction: () => void;
 }) {
+  const isMentor = role === "mentor";
+  const dotColor   = isMentor ? "#4DFFD2" : "#E8FF47";
+  const badgeBg    = isMentor ? "rgba(77,255,210,0.1)"  : "rgba(232,255,71,0.1)";
+  const badgeBorder= isMentor ? "rgba(77,255,210,0.3)"  : "rgba(232,255,71,0.3)";
+  const badgeText  = isMentor ? "#4DFFD2" : "#E8FF47";
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
       {/* Panel header */}
-      <div style={{
-        display: "flex", alignItems: "flex-end", justifyContent: "space-between",
-        marginBottom: 20,
-      }}>
+      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <h2 style={{
-            fontFamily: "var(--font-syne, sans-serif)",
-            fontWeight: 700, fontSize: 17,
-            color: "var(--text)", letterSpacing: "-0.01em",
-            marginBottom: 3,
-          }}>
-            {title}
-          </h2>
-          <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11, color: "var(--text-muted)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+            {/* Coloured dot */}
+            <span style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: dotColor, flexShrink: 0, boxShadow: `0 0 6px ${dotColor}` }} />
+            <h2 style={{
+              fontFamily: "var(--font-syne, sans-serif)",
+              fontWeight: 700, fontSize: 17,
+              color: "#F0F0F5", letterSpacing: "-0.01em", margin: 0,
+            }}>
+              {title}
+            </h2>
+          </div>
+          <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11, color: "#5A5A7A", marginLeft: 16 }}>
             {subtitle}
           </p>
         </div>
         {!isLoading && bondIds.length > 0 && (
           <span style={{
             fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11,
-            color: "var(--accent)",
-            backgroundColor: "rgba(77,255,210,0.1)",
-            border: "1px solid rgba(77,255,210,0.2)",
+            color: badgeText,
+            backgroundColor: badgeBg,
+            border: `1px solid ${badgeBorder}`,
             borderRadius: 999, padding: "3px 10px",
+            whiteSpace: "nowrap",
           }}>
             {bondIds.length} active
           </span>
@@ -248,19 +255,20 @@ function DashboardInner() {
       <main style={{ maxWidth: 1280, margin: "0 auto", padding: "48px 40px 80px" }}>
 
         {/* ── Page header ── */}
-        <div style={{ marginBottom: 40 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
-            <h1 style={{
-              fontFamily: "var(--font-syne, sans-serif)",
-              fontWeight: 800, fontSize: 32,
-              color: "var(--text)", letterSpacing: "-0.025em",
-              margin: 0,
-            }}>
-              My Bonds
-            </h1>
-          </div>
-          <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 12, color: "var(--text-muted)" }}>
-            {shortAddr} · Base Sepolia
+        <div style={{ marginBottom: 40, paddingLeft: 16, borderLeft: "3px solid #E8FF47" }}>
+          <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 12, color: "#5A5A7A", marginBottom: 6 }}>
+            Welcome back · {shortAddr}
+          </p>
+          <h1 style={{
+            fontFamily: "var(--font-syne, sans-serif)",
+            fontWeight: 800, fontSize: 32,
+            color: "#F0F0F5", letterSpacing: "-0.025em",
+            margin: "0 0 8px",
+          }}>
+            Your Bonds
+          </h1>
+          <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 13, color: "#5A5A7A" }}>
+            Manage your active mentorships and learning engagements
           </p>
         </div>
 

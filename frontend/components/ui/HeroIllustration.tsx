@@ -114,16 +114,17 @@ export default function HeroIllustration() {
       >0x9b1e…3fa2</text>
 
       {/* ══════════════════════════════════════════
-          CENTER — BOND CARD
+          CENTER — BOND CARD (elevated, focal point)
       ══════════════════════════════════════════ */}
+      <g transform="translate(0, -8) scale(1.0)" style={{ filter: "drop-shadow(0 0 20px rgba(77,255,210,0.2))" }}>
       <rect x="186" y="60" width="148" height="188" rx="10"
-        fill="var(--bg-card)" stroke="var(--accent)" strokeWidth="1.5" />
+        fill="rgba(77,255,210,0.06)" stroke="rgba(77,255,210,0.5)" strokeWidth="2" />
 
       {/* Bond header */}
       <rect x="186" y="60" width="148" height="36" rx="10"
-        fill="var(--bg-card-alt)" />
+        fill="rgba(77,255,210,0.08)" />
       <rect x="186" y="78" width="148" height="18"
-        fill="var(--bg-card-alt)" />
+        fill="rgba(77,255,210,0.08)" />
 
       <text x="260" y="83"
         textAnchor="middle"
@@ -134,15 +135,12 @@ export default function HeroIllustration() {
       >BOND #042</text>
 
       {/* Lock icon — center of bond card */}
-      {/* Lock body */}
       <rect x="244" y="118" width="32" height="26" rx="4"
-        fill="var(--bg-card-alt)" stroke="var(--accent)" strokeWidth="1.5" />
-      {/* Lock shackle */}
+        fill="rgba(77,255,210,0.1)" stroke="#4DFFD2" strokeWidth="2" />
       <path d="M250 118 L250 110 Q250 102 260 102 Q270 102 270 110 L270 118"
-        stroke="var(--accent)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-      {/* Keyhole */}
-      <circle cx="260" cy="129" r="3.5" fill="var(--accent)" opacity="0.8" />
-      <rect x="258.5" y="129" width="3" height="6" rx="1" fill="var(--accent)" opacity="0.8" />
+        stroke="#4DFFD2" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <circle cx="260" cy="129" r="3.5" fill="#4DFFD2" opacity="0.9" />
+      <rect x="258.5" y="129" width="3" height="6" rx="1" fill="#4DFFD2" opacity="0.9" />
 
       {/* Skill title line */}
       <text x="260" y="162"
@@ -223,91 +221,93 @@ export default function HeroIllustration() {
         fill="var(--text-muted)"
       >Learner pending…</text>
 
+      </g>{/* end center card group */}
+
       {/* ══════════════════════════════════════════
-          CONNECTING LINES
+          CONNECTING LINES — animated yellow-green
       ══════════════════════════════════════════ */}
 
       {/* Mentor → Bond */}
       <line x1="132" y1="154" x2="184" y2="154"
-        stroke="var(--border)" strokeWidth="1"
-        strokeDasharray="4 3"
-        markerEnd="url(#arrow)" />
+        stroke="#E8FF47" strokeWidth="1.5"
+        strokeDasharray="6 4"
+        markerEnd="url(#arrow-yellow)"
+        style={{ animation: "dashPulse 1.5s linear infinite" }}
+      />
 
       {/* Bond → Learner */}
       <line x1="336" y1="154" x2="388" y2="154"
-        stroke="var(--accent)" strokeWidth="1.5"
-        strokeDasharray="4 3"
-        markerEnd="url(#arrow-accent)" />
+        stroke="#E8FF47" strokeWidth="1.5"
+        strokeDasharray="6 4"
+        markerEnd="url(#arrow-yellow)"
+        style={{ animation: "dashPulse 1.5s linear infinite 0.75s" }}
+      />
 
       {/* ══════════════════════════════════════════
-          BOTTOM — NFT CREDENTIAL CARDS
+          BOTTOM — NFT CREDENTIAL CARDS (larger)
       ══════════════════════════════════════════ */}
 
       {/* Label above */}
       <text x="260" y="272"
-        textAnchor="middle"
-        fontSize="5.5"
+        textAnchor="middle" fontSize="5.5"
         fontFamily="var(--font-dm-mono), monospace"
-        letterSpacing="0.08em"
-        fill="var(--text-muted)"
+        letterSpacing="0.08em" fill="var(--text-muted)"
       >ON COMPLETION — MINTED TO BOTH</text>
 
-      {/* NFT card left */}
-      <rect x="148" y="280" width="96" height="48" rx="6"
-        fill="var(--bg-card)" stroke="var(--accent)" strokeWidth="1" />
-      <rect x="148" y="280" width="96" height="14" rx="6"
-        fill="var(--bg-card-alt)" />
-      <rect x="148" y="287" width="96" height="7"
-        fill="var(--bg-card-alt)" />
-      <text x="196" y="291"
-        textAnchor="middle"
-        fontSize="5"
-        fontFamily="var(--font-dm-mono), monospace"
-        letterSpacing="0.08em"
-        fill="var(--text-muted)"
+      {/* NFT card left — MENTOR PROOF */}
+      <rect x="136" y="278" width="110" height="56" rx="8"
+        fill="rgba(77,255,210,0.06)" stroke="#4DFFD2" strokeWidth="1.5"
+        style={{ filter: "drop-shadow(0 0 12px rgba(77,255,210,0.2))" }}
+      />
+      <rect x="136" y="278" width="110" height="16" rx="8" fill="rgba(77,255,210,0.1)" />
+      <rect x="136" y="287" width="110" height="7" fill="rgba(77,255,210,0.1)" />
+      <text x="191" y="291" textAnchor="middle" fontSize="5.5"
+        fontFamily="var(--font-dm-mono), monospace" letterSpacing="0.08em" fill="#4DFFD2"
       >MENTOR PROOF</text>
-      {/* Lock small */}
-      <rect x="186" y="300" width="20" height="14" rx="3"
-        fill="var(--bg-card-alt)" stroke="var(--accent)" strokeWidth="1" />
-      <path d="M189 300 L189 296 Q189 292 196 292 Q203 292 203 296 L203 300"
-        stroke="var(--accent)" strokeWidth="1" fill="none" strokeLinecap="round" />
-      <text x="196" y="322"
-        textAnchor="middle"
-        fontSize="5"
-        fontFamily="var(--font-dm-mono), monospace"
-        fill="var(--text-muted)"
-      >Soulbound · Non-transferable</text>
+      <rect x="181" y="300" width="20" height="14" rx="3"
+        fill="rgba(77,255,210,0.1)" stroke="#4DFFD2" strokeWidth="1.2" />
+      <path d="M184 300 L184 296 Q184 292 191 292 Q198 292 198 296 L198 300"
+        stroke="#4DFFD2" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+      <text x="191" y="324" textAnchor="middle" fontSize="5"
+        fontFamily="var(--font-dm-mono), monospace" fill="#5A5A7A"
+      >Soulbound</text>
 
-      {/* NFT card right */}
-      <rect x="276" y="280" width="96" height="48" rx="6"
-        fill="var(--bg-card)" stroke="var(--accent)" strokeWidth="1" />
-      <rect x="276" y="280" width="96" height="14" rx="6"
-        fill="var(--bg-card-alt)" />
-      <rect x="276" y="287" width="96" height="7"
-        fill="var(--bg-card-alt)" />
-      <text x="324" y="291"
-        textAnchor="middle"
-        fontSize="5"
-        fontFamily="var(--font-dm-mono), monospace"
-        letterSpacing="0.08em"
-        fill="var(--text-muted)"
+      {/* NFT card right — LEARNER PROOF */}
+      <rect x="274" y="278" width="110" height="56" rx="8"
+        fill="rgba(77,255,210,0.06)" stroke="#4DFFD2" strokeWidth="1.5"
+        style={{ filter: "drop-shadow(0 0 12px rgba(77,255,210,0.2))" }}
+      />
+      <rect x="274" y="278" width="110" height="16" rx="8" fill="rgba(77,255,210,0.1)" />
+      <rect x="274" y="287" width="110" height="7" fill="rgba(77,255,210,0.1)" />
+      <text x="329" y="291" textAnchor="middle" fontSize="5.5"
+        fontFamily="var(--font-dm-mono), monospace" letterSpacing="0.08em" fill="#4DFFD2"
       >LEARNER PROOF</text>
-      <rect x="314" y="300" width="20" height="14" rx="3"
-        fill="var(--bg-card-alt)" stroke="var(--accent)" strokeWidth="1" />
-      <path d="M317 300 L317 296 Q317 292 324 292 Q331 292 331 296 L331 300"
-        stroke="var(--accent)" strokeWidth="1" fill="none" strokeLinecap="round" />
-      <text x="324" y="322"
-        textAnchor="middle"
-        fontSize="5"
-        fontFamily="var(--font-dm-mono), monospace"
-        fill="var(--text-muted)"
-      >Soulbound · Non-transferable</text>
+      <rect x="319" y="300" width="20" height="14" rx="3"
+        fill="rgba(77,255,210,0.1)" stroke="#4DFFD2" strokeWidth="1.2" />
+      <path d="M322 300 L322 296 Q322 292 329 292 Q336 292 336 296 L336 300"
+        stroke="#4DFFD2" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+      <text x="329" y="324" textAnchor="middle" fontSize="5"
+        fontFamily="var(--font-dm-mono), monospace" fill="#5A5A7A"
+      >Soulbound</text>
 
-      {/* Vertical drop lines from bond to NFT cards */}
-      <line x1="260" y1="248" x2="196" y2="278"
-        stroke="var(--border)" strokeWidth="1" strokeDasharray="3 3" />
-      <line x1="260" y1="248" x2="324" y2="278"
-        stroke="var(--border)" strokeWidth="1" strokeDasharray="3 3" />
+      {/* Drop lines */}
+      <line x1="260" y1="248" x2="191" y2="276"
+        stroke="rgba(255,255,255,0.1)" strokeWidth="1" strokeDasharray="3 3" />
+      <line x1="260" y1="248" x2="329" y2="276"
+        stroke="rgba(255,255,255,0.1)" strokeWidth="1" strokeDasharray="3 3" />
+
+      {/* Yellow arrow marker */}
+      <defs>
+        <marker id="arrow-yellow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 z" fill="#E8FF47" />
+        </marker>
+      </defs>
+
+      <style>{`
+        @keyframes dashPulse {
+          to { stroke-dashoffset: -20; }
+        }
+      `}</style>
     </svg>
   );
 }

@@ -79,110 +79,158 @@ export default function Home() {
     >
       {/* ── Nav ── */}
       <nav
-        className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 max-w-6xl mx-auto"
-        style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--bg)" }}
+        className="sticky top-0 z-50"
+        style={{
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          backgroundColor: "var(--nav-bg)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+        }}
       >
-        <Logo width={180} height={46} />
-        <div className="flex items-center gap-4">
-          <ThemeToggle />
-          <span
-            className="hidden sm:inline text-xs font-[family-name:var(--font-dm-mono)] px-3 py-1 rounded"
-            style={{ color: "var(--text-muted)", border: "1px solid var(--border)" }}
-          >
-            Base Sepolia
-          </span>
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="hidden sm:inline text-xs font-[family-name:var(--font-dm-mono)] px-3 py-1 rounded transition-colors hover:opacity-80"
-            style={{ color: "var(--text-muted)", border: "1px solid var(--border)", background: "transparent", cursor: "pointer" }}
-            aria-label="Go to dashboard"
-          >
-            Dashboard
-          </button>
-          <ConnectButton />
+        <div className="flex items-center justify-between px-8 py-4 max-w-7xl mx-auto">
+          <Logo width={180} height={46} />
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <span
+              className="hidden sm:inline text-xs font-[family-name:var(--font-dm-mono)] px-3 py-1 rounded"
+              style={{ color: "var(--text-muted)", border: "1px solid rgba(255,255,255,0.08)" }}
+            >
+              Base Sepolia
+            </span>
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="hidden sm:inline text-xs font-[family-name:var(--font-dm-mono)] px-3 py-1 rounded"
+              style={{ color: "var(--text-muted)", border: "1px solid rgba(255,255,255,0.08)", background: "transparent", cursor: "pointer", minHeight: 44, transition: "color 0.15s" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "#F0F0F5")}
+              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}
+              aria-label="Go to dashboard"
+            >
+              Dashboard
+            </button>
+            <ConnectButton />
+          </div>
         </div>
       </nav>
 
       {/* ── Hero ── */}
-      <section className="px-6 pt-14 pb-16 max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <section className="px-8 pt-24 pb-20 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
           {/* Left — copy */}
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            animate="show"
-          >
+          <motion.div variants={stagger} initial="hidden" animate="show">
             <motion.h1
               variants={fadeUp}
-              className="text-5xl sm:text-6xl font-black leading-[1.0] tracking-tight mb-6"
-              style={{ color: "var(--text)" }}
+              className="font-black leading-[1.05] tracking-tight mb-6"
+              style={{ fontSize: "clamp(40px, 5vw, 64px)", color: "#F0F0F5" }}
             >
               Your skills.{" "}
-              <span style={{ color: "var(--accent)" }}>
-                Witnessed on-chain.
-              </span>
+              <span style={{ color: "#E8FF47" }}>Witnessed</span>
+              {" "}on-chain.
             </motion.h1>
 
             <motion.p
               variants={fadeUp}
-              className="text-base sm:text-lg max-w-md leading-relaxed mb-8"
-              style={{ color: "var(--text-sub)" }}
+              className="text-base leading-relaxed mb-10"
+              style={{ color: "rgba(240,240,245,0.72)", maxWidth: 480 }}
             >
               CoSigned is a dual-signature mentorship protocol. Mentor and learner
               co-sign a Bond on-chain. When both sign, a soulbound NFT is minted to
               each — proof that can never be faked, transferred, or revoked.
             </motion.p>
 
-            <motion.div variants={fadeUp} className="flex flex-row gap-3">
+            <motion.div variants={fadeUp} className="flex flex-row gap-4">
               <button
                 onClick={() => router.push("/bond/create")}
-                className="px-7 py-3 rounded font-bold text-sm transition-opacity hover:opacity-80"
-                style={{ backgroundColor: "var(--accent)", color: "#0D0D0D" }}
+                style={{
+                  backgroundColor: "#4DFFD2", color: "#0A0A0F",
+                  fontFamily: "var(--font-syne, sans-serif)", fontWeight: 700, fontSize: 15,
+                  padding: "16px 32px", borderRadius: 12, border: "none",
+                  cursor: "pointer", minHeight: 44,
+                  transition: "background-color 200ms ease",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#E8FF47")}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#4DFFD2")}
                 aria-label="Start a Bond"
               >
                 Start a Bond
               </button>
               <button
                 onClick={() => router.push("/explore")}
-                className="px-7 py-3 rounded font-bold text-sm transition-opacity hover:opacity-70"
-                style={{ border: "1px solid var(--border)", color: "var(--text)", backgroundColor: "transparent" }}
+                style={{
+                  backgroundColor: "transparent",
+                  border: "1px solid rgba(240,240,245,0.2)",
+                  color: "rgba(240,240,245,0.5)",
+                  fontFamily: "var(--font-syne, sans-serif)", fontWeight: 500, fontSize: 14,
+                  padding: "16px 32px", borderRadius: 12,
+                  cursor: "pointer", minHeight: 44,
+                  transition: "border-color 200ms ease, color 200ms ease",
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = "rgba(240,240,245,0.4)";
+                  e.currentTarget.style.color = "rgba(240,240,245,0.8)";
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = "rgba(240,240,245,0.2)";
+                  e.currentTarget.style.color = "rgba(240,240,245,0.5)";
+                }}
                 aria-label="Explore open bonds"
               >
                 Explore Bonds
               </button>
             </motion.div>
 
-            {/* Live stats */}
+            {/* Stats strip */}
             <motion.div
               variants={fadeUp}
-              className="flex gap-10 mt-12 pt-8"
-              style={{ borderTop: "1px solid var(--border)" }}
+              className="flex items-center mt-16 pt-8"
+              style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
             >
               {[
-                { value: totalBonds,    label: "Total Bonds" },
-                { value: coSigned,      label: "CoSigned" },
-                { value: activeMentors, label: "Active Mentors" },
-              ].map(({ value, label }) => (
-                <div key={label}>
-                  <p className="text-2xl font-black tabular-nums" style={{ color: "var(--text)" }}>
-                    {value}
-                  </p>
-                  <p className="text-xs mt-1 font-[family-name:var(--font-dm-mono)]" style={{ color: "var(--text-muted)" }}>
-                    {label}
-                  </p>
-                </div>
-              ))}
+                { value: totalBonds, label: "Total Bonds Created" },
+                null,
+                { value: "Live", label: "On Base Sepolia", dot: true },
+                null,
+                { value: "2", label: "Contracts Verified" },
+              ].map((item, i) =>
+                item === null ? (
+                  <div key={i} style={{ width: 1, height: 32, backgroundColor: "rgba(255,255,255,0.08)", margin: "0 28px", flexShrink: 0 }} />
+                ) : (
+                  <div key={item.label} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      {item.dot && (
+                        <span style={{
+                          width: 8, height: 8, borderRadius: "50%",
+                          backgroundColor: "#4DFFD2",
+                          boxShadow: "0 0 6px #4DFFD2",
+                          animation: "pulse 2s ease-in-out infinite",
+                          flexShrink: 0,
+                        }} />
+                      )}
+                      <span style={{ fontFamily: "var(--font-syne, sans-serif)", fontWeight: 700, fontSize: 28, color: "#E8FF47", lineHeight: 1 }}>
+                        {item.value}
+                      </span>
+                    </div>
+                    <span style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11, color: "#5A5A7A", textTransform: "uppercase", letterSpacing: "0.15em" }}>
+                      {item.label}
+                    </span>
+                  </div>
+                )
+              )}
             </motion.div>
           </motion.div>
 
           {/* Right — illustration */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 24 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-            className="rounded-xl p-4 hidden lg:block"
-            style={{ border: "1px solid var(--border)", backgroundColor: "var(--bg-card)" }}
+            transition={{ duration: 0.6, delay: 0.25, ease: [0.25,0.1,0.25,1] }}
+            className="hidden lg:block"
+            style={{
+              borderRadius: 20,
+              padding: 20,
+              border: "1px solid rgba(77,255,210,0.15)",
+              backgroundColor: "rgba(77,255,210,0.03)",
+            }}
           >
             <HeroIllustration />
           </motion.div>
@@ -191,8 +239,8 @@ export default function Home() {
 
       {/* ── How It Works ── */}
       <section
-        className="px-6 py-20"
-        style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}
+        className="px-8 py-24"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
       >
         <div className="max-w-6xl mx-auto">
           <div className="flex items-baseline justify-between mb-12">

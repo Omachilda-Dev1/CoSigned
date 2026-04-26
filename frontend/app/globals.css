@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Light mode — warm off-white, strong contrast ─────────────────────────── */
+/* ── Design tokens ────────────────────────────────────────────────────────── */
 :root {
   --bg:           #F0EDE6;
   --bg-card:      #E8E4DC;
@@ -17,25 +17,22 @@
   --nav-bg:       rgba(240, 237, 230, 0.92);
 }
 
-/* ── Dark mode — true black, punchy contrast ──────────────────────────────── */
 .dark {
-  --bg:           #080808;
-  --bg-card:      #111111;
-  --bg-card-alt:  #1A1A1A;
-  --border:       #2E2E2E;
-  --text:         #F2EEE8;
-  --text-sub:     #B0ABA4;
-  --text-muted:   #6B6760;
+  --bg:           #0A0A0F;
+  --bg-card:      rgba(255,255,255,0.03);
+  --bg-card-alt:  rgba(255,255,255,0.06);
+  --border:       rgba(255,255,255,0.08);
+  --text:         #F0F0F5;
+  --text-sub:     rgba(240,240,245,0.72);
+  --text-muted:   #5A5A7A;
   --accent:       #4DFFD2;
-  --accent-2:     #C8FF4D;
+  --accent-2:     #E8FF47;
   --lock-gold:    #E8C84D;
-  --nav-bg:       rgba(8, 8, 8, 0.92);
+  --nav-bg:       rgba(10,10,15,0.88);
 }
 
-/* ── Base reset ───────────────────────────────────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
 
 html {
   background-color: var(--bg);
@@ -51,21 +48,67 @@ body {
   min-height: 100vh;
 }
 
-/* ── Nav backdrop blur ────────────────────────────────────────────────────── */
-nav[style*="sticky"] {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background-color: var(--nav-bg) !important;
-}
-
-/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+/* ── Scrollbar (FIX 21) ───────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+::-webkit-scrollbar-track { background: #0A0A0F; }
+::-webkit-scrollbar-thumb { background: rgba(77,255,210,0.2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(77,255,210,0.4); }
 
 /* ── Selection ────────────────────────────────────────────────────────────── */
-::selection {
-  background: var(--accent);
-  color: #080808;
+::selection { background: #4DFFD2; color: #0A0A0F; }
+
+/* ── Shimmer animation (FIX 13) ───────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+/* ── Connecting line pulse (FIX 7) ───────────────────────────────────────── */
+@keyframes dashPulse {
+  0%   { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -24; }
+}
+
+/* ── Page fade-in (FIX 22) ────────────────────────────────────────────────── */
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+  animation: pageFadeIn 0.3s ease-out forwards;
+}
+
+/* ── Form focus/error states (FIX 20) ────────────────────────────────────── */
+.cosigned-input {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-family: var(--font-dm-mono, monospace);
+  font-size: 14px;
+  color: #F0F0F5;
+  width: 100%;
+  outline: none;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+  box-sizing: border-box;
+}
+
+.cosigned-input::placeholder { color: #3A3A5A; }
+
+.cosigned-input:focus {
+  border-color: rgba(77,255,210,0.4);
+  box-shadow: 0 0 0 3px rgba(77,255,210,0.08);
+}
+
+.cosigned-input.error {
+  border-color: rgba(255,77,109,0.4);
+  box-shadow: 0 0 0 3px rgba(255,77,109,0.08);
+}
+
+/* ── Mobile ───────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .two-col { grid-template-columns: 1fr !important; }
+  .hide-mobile { display: none !important; }
+  .sticky-preview { position: static !important; }
 }
