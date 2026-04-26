@@ -29,17 +29,15 @@ export default function ConnectButton() {
               <button
                 onClick={openConnectModal}
                 style={{
-                  fontFamily: "var(--font-dm-mono, monospace)",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  padding: "8px 18px",
-                  borderRadius: 6,
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 13, fontWeight: 700,
+                  padding: "8px 18px", borderRadius: "var(--radius-sm)",
                   border: "none",
-                  backgroundColor: "var(--accent, #4DFFD2)",
-                  color: "#0D0D0D",
+                  backgroundColor: "var(--accent-teal)",
+                  color: "var(--text-inverse)",
                   cursor: "pointer",
-                  transition: "opacity 0.15s",
-                  whiteSpace: "nowrap",
+                  transition: "opacity var(--transition-fast)",
+                  whiteSpace: "nowrap", minHeight: 44,
                 }}
                 onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
                 onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
@@ -51,15 +49,12 @@ export default function ConnectButton() {
               <button
                 onClick={openChainModal}
                 style={{
-                  fontFamily: "var(--font-dm-mono, monospace)",
-                  fontSize: 12,
-                  fontWeight: 700,
-                  padding: "8px 18px",
-                  borderRadius: 6,
-                  border: "1px solid #EF4444",
-                  backgroundColor: "transparent",
-                  color: "#EF4444",
-                  cursor: "pointer",
+                  fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700,
+                  padding: "8px 18px", borderRadius: "var(--radius-sm)",
+                  border: "1px solid var(--accent-red)",
+                  backgroundColor: "var(--accent-red-dim)",
+                  color: "var(--accent-red)",
+                  cursor: "pointer", minHeight: 44,
                 }}
                 aria-label="Wrong network — switch to Base Sepolia"
               >
@@ -67,21 +62,15 @@ export default function ConnectButton() {
               </button>
             ) : (
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                {/* Chain indicator */}
                 <button
                   onClick={openChainModal}
                   style={{
-                    fontFamily: "var(--font-dm-mono, monospace)",
-                    fontSize: 11,
-                    padding: "6px 12px",
-                    borderRadius: 6,
-                    border: "1px solid var(--border, #2a2a2a)",
-                    backgroundColor: "var(--bg-card, #141414)",
-                    color: "var(--text-muted, #6B7280)",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 6,
+                    fontFamily: "var(--font-mono)", fontSize: 11,
+                    padding: "6px 12px", borderRadius: "var(--radius-sm)",
+                    border: "1px solid var(--border-default)",
+                    backgroundColor: "var(--bg-elevated)",
+                    color: "var(--text-muted)",
+                    cursor: "pointer", display: "flex", alignItems: "center", gap: 6, minHeight: 44,
                   }}
                   aria-label="Switch network"
                 >
@@ -90,24 +79,18 @@ export default function ConnectButton() {
                   )}
                   {chain.name}
                 </button>
-
-                {/* Account button */}
                 <button
                   onClick={openAccountModal}
                   style={{
-                    fontFamily: "var(--font-dm-mono, monospace)",
-                    fontSize: 12,
-                    fontWeight: 700,
-                    padding: "7px 14px",
-                    borderRadius: 6,
-                    border: "1px solid var(--accent, #4DFFD2)",
-                    backgroundColor: "transparent",
-                    color: "var(--accent, #4DFFD2)",
-                    cursor: "pointer",
-                    transition: "background 0.15s",
+                    fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700,
+                    padding: "7px 14px", borderRadius: "var(--radius-sm)",
+                    border: "1px solid var(--accent-teal-border)",
+                    backgroundColor: "var(--accent-teal-dim)",
+                    color: "var(--accent-teal)",
+                    cursor: "pointer", transition: "opacity var(--transition-fast)", minHeight: 44,
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = "rgba(77,255,210,0.08)")}
-                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = "0.8")}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
                   aria-label="Account options"
                 >
                   {account.displayName}

@@ -9,24 +9,22 @@ import ConnectButton from "@/components/wallet/ConnectButton";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useUserBonds, useBond, useBondCounter } from "@/hooks/useCoSigned";
 
-// ─── Skeleton card ────────────────────────────────────────────────────────────
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
 
 function SkeletonCard() {
   return (
     <div style={{
-      height: 110,
-      borderRadius: 12,
-      border: "1px solid var(--border)",
-      backgroundColor: "var(--bg-card)",
-      position: "relative",
-      overflow: "hidden",
+      height: 110, borderRadius: "var(--radius-lg)",
+      border: "1px solid var(--border-subtle)",
+      backgroundColor: "var(--bg-elevated)",
+      position: "relative", overflow: "hidden",
     }}>
       <div style={{
         position: "absolute", inset: 0,
-        background: "linear-gradient(90deg, transparent 0%, var(--bg-card-alt) 50%, transparent 100%)",
+        background: "linear-gradient(90deg, transparent 0%, var(--bg-overlay) 50%, transparent 100%)",
+        backgroundSize: "200% 100%",
         animation: "shimmer 1.6s infinite",
       }} />
-      <style>{`@keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }`}</style>
     </div>
   );
 }
@@ -47,19 +45,15 @@ function EmptyState({ role, onAction }: { role: "mentor" | "learner"; onAction: 
   return (
     <div style={{
       padding: "52px 32px",
-      borderRadius: 16,
-      border: "1px dashed var(--border)",
+      borderRadius: "var(--radius-lg)",
+      border: "1px dashed var(--border-default)",
       textAlign: "center",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      gap: 14,
-      backgroundColor: "var(--bg-card)",
+      display: "flex", flexDirection: "column", alignItems: "center", gap: 14,
+      backgroundColor: "var(--bg-surface)",
     }}>
-      {/* Icon */}
       <div style={{
         width: 48, height: 48, borderRadius: "50%",
-        backgroundColor: "var(--bg-card-alt)",
+        backgroundColor: "var(--bg-elevated)",
         display: "flex", alignItems: "center", justifyContent: "center",
         marginBottom: 4,
       }}>
@@ -70,31 +64,27 @@ function EmptyState({ role, onAction }: { role: "mentor" | "learner"; onAction: 
           }
         </svg>
       </div>
-
       <div>
-        <p style={{ fontFamily: "var(--font-syne, sans-serif)", fontSize: 15, fontWeight: 700, color: "var(--text)", marginBottom: 6 }}>
+        <p style={{ fontFamily: "var(--font-display)", fontSize: 15, fontWeight: 700, color: "var(--text-primary)", marginBottom: 6 }}>
           {isMentor ? "No bonds yet" : "No learning bonds yet"}
         </p>
-        <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.7, maxWidth: 220 }}>
+        <p style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.7, maxWidth: 220 }}>
           {isMentor
             ? "Create your first bond and start mentoring someone on-chain."
             : "Browse open bonds and accept one to start learning."}
         </p>
       </div>
-
       <button
         onClick={onAction}
         style={{
           marginTop: 4,
-          fontFamily: "var(--font-dm-mono, monospace)",
-          fontSize: 12, fontWeight: 700,
-          padding: "9px 22px",
-          borderRadius: 8,
-          border: isMentor ? "none" : "1px solid var(--border)",
-          color: isMentor ? "#080808" : "var(--text)",
-          backgroundColor: isMentor ? "var(--accent)" : "transparent",
-          cursor: "pointer",
-          transition: "opacity 0.15s",
+          fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700,
+          padding: "10px 24px", borderRadius: "var(--radius-sm)",
+          border: isMentor ? "none" : "1px solid var(--border-default)",
+          color: isMentor ? "var(--text-inverse)" : "var(--text-secondary)",
+          backgroundColor: isMentor ? "var(--accent-teal)" : "transparent",
+          cursor: "pointer", transition: "opacity var(--transition-fast)",
+          minHeight: 44,
         }}
         onMouseEnter={e => (e.currentTarget.style.opacity = "0.8")}
         onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
@@ -111,16 +101,15 @@ function StatPill({ label, value, accent }: { label: string; value: string; acce
   return (
     <div style={{
       display: "flex", flexDirection: "column", gap: 4,
-      padding: "16px 24px",
-      borderRadius: 12,
-      border: `1px solid ${accent ? "var(--accent)" : "var(--border)"}`,
-      backgroundColor: accent ? "rgba(77,255,210,0.06)" : "var(--bg-card)",
+      padding: "16px 24px", borderRadius: "var(--radius-md)",
+      border: `1px solid ${accent ? "var(--accent-teal-border)" : "var(--border-default)"}`,
+      backgroundColor: accent ? "var(--accent-teal-dim)" : "var(--bg-elevated)",
       minWidth: 120,
     }}>
-      <span style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+      <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
         {label}
       </span>
-      <span style={{ fontFamily: "var(--font-syne, sans-serif)", fontSize: 26, fontWeight: 800, color: accent ? "var(--accent)" : "var(--text)", letterSpacing: "-0.02em", lineHeight: 1 }}>
+      <span style={{ fontFamily: "var(--font-display)", fontSize: 26, fontWeight: 800, color: accent ? "var(--accent-teal)" : "var(--text-primary)", letterSpacing: "-0.02em", lineHeight: 1 }}>
         {value}
       </span>
     </div>
@@ -130,54 +119,41 @@ function StatPill({ label, value, accent }: { label: string; value: string; acce
 // ─── Bond panel ───────────────────────────────────────────────────────────────
 
 function BondPanel({ title, subtitle, bondIds, role, isLoading, onAction }: {
-  title: string;
-  subtitle: string;
-  bondIds: bigint[];
-  role: "mentor" | "learner";
-  isLoading: boolean;
-  onAction: () => void;
+  title: string; subtitle: string; bondIds: bigint[];
+  role: "mentor" | "learner"; isLoading: boolean; onAction: () => void;
 }) {
-  const isMentor = role === "mentor";
-  const dotColor   = isMentor ? "#4DFFD2" : "#E8FF47";
-  const badgeBg    = isMentor ? "rgba(77,255,210,0.1)"  : "rgba(232,255,71,0.1)";
-  const badgeBorder= isMentor ? "rgba(77,255,210,0.3)"  : "rgba(232,255,71,0.3)";
-  const badgeText  = isMentor ? "#4DFFD2" : "#E8FF47";
+  const isMentor   = role === "mentor";
+  const dotVar     = isMentor ? "var(--accent-teal)"   : "var(--accent-yellow)";
+  const badgeBgVar = isMentor ? "var(--accent-teal-dim)"    : "var(--accent-yellow-dim)";
+  const badgeBdVar = isMentor ? "var(--accent-teal-border)" : "var(--accent-yellow-border)";
+  const badgeTxVar = isMentor ? "var(--accent-teal)"        : "var(--accent-yellow)";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-      {/* Panel header */}
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-            {/* Coloured dot */}
-            <span style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: dotColor, flexShrink: 0, boxShadow: `0 0 6px ${dotColor}` }} />
-            <h2 style={{
-              fontFamily: "var(--font-syne, sans-serif)",
-              fontWeight: 700, fontSize: 17,
-              color: "#F0F0F5", letterSpacing: "-0.01em", margin: 0,
-            }}>
+            <span style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: dotVar, flexShrink: 0, boxShadow: `0 0 6px ${dotVar}` }} />
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 17, color: "var(--text-primary)", letterSpacing: "-0.01em", margin: 0 }}>
               {title}
             </h2>
           </div>
-          <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11, color: "#5A5A7A", marginLeft: 16 }}>
+          <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)", marginLeft: 16 }}>
             {subtitle}
           </p>
         </div>
         {!isLoading && bondIds.length > 0 && (
           <span style={{
-            fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11,
-            color: badgeText,
-            backgroundColor: badgeBg,
-            border: `1px solid ${badgeBorder}`,
-            borderRadius: 999, padding: "3px 10px",
-            whiteSpace: "nowrap",
+            fontFamily: "var(--font-mono)", fontSize: 11,
+            color: badgeTxVar, backgroundColor: badgeBgVar,
+            border: `1px solid ${badgeBdVar}`,
+            borderRadius: "var(--radius-full)", padding: "3px 10px", whiteSpace: "nowrap",
           }}>
             {bondIds.length} active
           </span>
         )}
       </div>
 
-      {/* Content */}
       {isLoading ? (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <SkeletonCard /><SkeletonCard />
@@ -186,9 +162,7 @@ function BondPanel({ title, subtitle, bondIds, role, isLoading, onAction }: {
         <EmptyState role={role} onAction={onAction} />
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {bondIds.map(id => (
-            <BondCardLoader key={id.toString()} bondId={id} role={role} />
-          ))}
+          {bondIds.map(id => <BondCardLoader key={id.toString()} bondId={id} role={role} />)}
         </div>
       )}
     </div>
@@ -206,39 +180,31 @@ function DashboardInner() {
   const halfLen    = Math.ceil(bondIds.length / 2);
   const mentorIds  = bondIds.slice(0, halfLen);
   const learnerIds = bondIds.slice(halfLen);
-
-  const shortAddr = address ? `${address.slice(0, 6)}…${address.slice(-4)}` : "";
+  const shortAddr  = address ? `${address.slice(0, 6)}…${address.slice(-4)}` : "";
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)", color: "var(--text)" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "var(--bg-page)", color: "var(--text-primary)" }}>
 
-      {/* ── Nav ── */}
+      {/* Nav */}
       <nav style={{
         position: "sticky", top: 0, zIndex: 50,
-        borderBottom: "1px solid var(--border)",
+        borderBottom: "1px solid var(--nav-border)",
         backgroundColor: "var(--nav-bg)",
         backdropFilter: "blur(12px)",
         WebkitBackdropFilter: "blur(12px)",
       }}>
-        <div style={{
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "14px 40px", maxWidth: 1280, margin: "0 auto",
-        }}>
-          <button
-            onClick={() => router.push("/")}
-            style={{ background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 0 }}
-            aria-label="Go to home"
-          >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 40px", maxWidth: 1280, margin: "0 auto" }}>
+          <button onClick={() => router.push("/")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 0 }} aria-label="Home">
             <Logo width={156} height={40} />
           </button>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <button
               onClick={() => router.push("/bond/create")}
               style={{
-                fontFamily: "var(--font-dm-mono, monospace)", fontSize: 12, fontWeight: 700,
-                padding: "8px 18px", borderRadius: 8,
-                backgroundColor: "var(--accent)", color: "#080808",
-                border: "none", cursor: "pointer", transition: "opacity 0.15s",
+                fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700,
+                padding: "8px 18px", borderRadius: "var(--radius-sm)",
+                backgroundColor: "var(--accent-teal)", color: "var(--text-inverse)",
+                border: "none", cursor: "pointer", transition: "opacity var(--transition-fast)", minHeight: 44,
               }}
               onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
               onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
@@ -251,122 +217,76 @@ function DashboardInner() {
         </div>
       </nav>
 
-      {/* ── Page ── */}
+      {/* Main */}
       <main style={{ maxWidth: 1280, margin: "0 auto", padding: "48px 40px 80px" }}>
 
-        {/* ── Page header ── */}
-        <div style={{ marginBottom: 40, paddingLeft: 16, borderLeft: "3px solid #E8FF47" }}>
-          <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 12, color: "#5A5A7A", marginBottom: 6 }}>
-            Welcome back · {shortAddr}
+        {/* Header */}
+        <div style={{ marginBottom: 40, paddingLeft: 16, borderLeft: "3px solid var(--accent-yellow)" }}>
+          <p style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-muted)", marginBottom: 6 }}>
+            Welcome back · <span style={{ color: "var(--accent-teal)" }}>{shortAddr}</span>
           </p>
-          <h1 style={{
-            fontFamily: "var(--font-syne, sans-serif)",
-            fontWeight: 800, fontSize: 32,
-            color: "#F0F0F5", letterSpacing: "-0.025em",
-            margin: "0 0 8px",
-          }}>
+          <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 32, color: "var(--text-primary)", letterSpacing: "-0.025em", margin: "0 0 8px" }}>
             Your Bonds
           </h1>
-          <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 13, color: "#5A5A7A" }}>
+          <p style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--text-muted)" }}>
             Manage your active mentorships and learning engagements
           </p>
         </div>
 
-        {/* ── Stats row ── */}
+        {/* Stats */}
         <div style={{ display: "flex", gap: 12, marginBottom: 48, flexWrap: "wrap" }}>
           <StatPill label="Total Bonds" value={count.toString()} accent />
-          <StatPill label="Mentoring" value={mentorIds.length.toString()} />
-          <StatPill label="Learning" value={learnerIds.length.toString()} />
+          <StatPill label="Mentoring"   value={mentorIds.length.toString()} />
+          <StatPill label="Learning"    value={learnerIds.length.toString()} />
         </div>
 
-        {/* ── Divider with label ── */}
-        <div style={{
-          display: "flex", alignItems: "center", gap: 16, marginBottom: 32,
-        }}>
-          <div style={{ flex: 1, height: 1, backgroundColor: "var(--border)" }} />
-          <span style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.12em", whiteSpace: "nowrap" }}>
+        {/* Divider */}
+        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
+          <div style={{ flex: 1, height: 1, backgroundColor: "var(--border-subtle)" }} />
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.12em", whiteSpace: "nowrap" }}>
             Your Activity
           </span>
-          <div style={{ flex: 1, height: 1, backgroundColor: "var(--border)" }} />
+          <div style={{ flex: 1, height: 1, backgroundColor: "var(--border-subtle)" }} />
         </div>
 
-        {/* ── Two-column panels ── */}
+        {/* Panels */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
-          <BondPanel
-            title="Bonds I'm Mentoring"
-            subtitle="Skills you're teaching on-chain"
-            bondIds={mentorIds}
-            role="mentor"
-            isLoading={isLoading}
-            onAction={() => router.push("/bond/create")}
-          />
-          <BondPanel
-            title="Bonds I'm Learning"
-            subtitle="Skills you're acquiring on-chain"
-            bondIds={learnerIds}
-            role="learner"
-            isLoading={isLoading}
-            onAction={() => router.push("/explore")}
-          />
+          <BondPanel title="Bonds I'm Mentoring" subtitle="Skills you're teaching on-chain"   bondIds={mentorIds}  role="mentor"  isLoading={isLoading} onAction={() => router.push("/bond/create")} />
+          <BondPanel title="Bonds I'm Learning"  subtitle="Skills you're acquiring on-chain"  bondIds={learnerIds} role="learner" isLoading={isLoading} onAction={() => router.push("/explore")} />
         </div>
-
       </main>
+
+      {/* Footer */}
+      <footer style={{ borderTop: "1px solid var(--border-subtle)", backgroundColor: "var(--bg-page)" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", padding: "20px 40px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Logo variant="icon" width={22} height={22} />
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)" }}>
+              CoSigned — Your skills. Witnessed on-chain.
+            </span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+            <a href="https://sepolia.basescan.org/address/0xd1D2a913eb75B43125AA860bea1BabC27F2d550A" target="_blank" rel="noopener noreferrer"
+              style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)", textDecoration: "none" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "var(--accent-teal)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}
+            >BaseScan ↗</a>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)" }}>Base Sepolia · Chain 84532</span>
+          </div>
+        </div>
+      </footer>
 
       <style>{`
         @media (max-width: 768px) {
           main { padding: 32px 20px 60px !important; }
           nav > div { padding: 12px 20px !important; }
-          div[style*="grid-template-columns: 1fr 1fr"] {
-            grid-template-columns: 1fr !important;
-            gap: 40px !important;
-          }
+          div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; gap: 40px !important; }
         }
       `}</style>
-
-      {/* ── Footer ── */}
-      <footer style={{
-        borderTop: "1px solid var(--border)",
-        backgroundColor: "var(--bg)",
-      }}>
-        <div style={{
-          maxWidth: 1280, margin: "0 auto",
-          padding: "20px 40px",
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          flexWrap: "wrap", gap: 12,
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <Logo variant="icon" width={22} height={22} />
-            <span style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11, color: "var(--text-muted)" }}>
-              CoSigned — Your skills. Witnessed on-chain.
-            </span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-            <a
-              href="https://sepolia.basescan.org/address/0xd1D2a913eb75B43125AA860bea1BabC27F2d550A"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11, color: "var(--text-muted)", textDecoration: "none" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "var(--accent)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}
-            >
-              BaseScan ↗
-            </a>
-            <span style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11, color: "var(--text-muted)" }}>
-              Base Sepolia · Chain 84532
-            </span>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
 
-// ─── Export ───────────────────────────────────────────────────────────────────
-
 export default function DashboardPage() {
-  return (
-    <WalletGuard>
-      <DashboardInner />
-    </WalletGuard>
-  );
+  return <WalletGuard><DashboardInner /></WalletGuard>;
 }
