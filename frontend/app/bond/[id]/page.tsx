@@ -8,6 +8,8 @@ import ThemeToggle from "@/components/ui/ThemeToggle";
 import StatusBadge from "@/components/ui/StatusBadge";
 import BondTimeline from "@/components/bond/BondTimeline";
 import SignButton from "@/components/bond/SignButton";
+import NFTReveal from "@/components/nft/NFTReveal";
+import ShareCard from "@/components/ui/ShareCard";
 import { useBond, usePartyRole } from "@/hooks/useCoSigned";
 import { BondStatus } from "@/types/bond";
 import { formatEther } from "viem";
@@ -277,6 +279,34 @@ export default function BondDetailPage({ params }: { params: { id: string } }) {
                 <SignButton bond={bond} />
               )}
             </div>
+
+            {/* NFT Reveal — shown when completed */}
+            {isCompleted && isParty && (
+              <div style={{ marginTop: 8 }}>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12 }}>
+                  Your Credential
+                </p>
+                <NFTReveal
+                  learnerName={truncate(bond.learner)}
+                  mentorName={truncate(bond.mentor)}
+                  skillTitle={bond.skillTitle}
+                  successCriteria={bond.successCriteria}
+                  startDate=""
+                  completedDate={formatDeadline(bond.deadline)}
+                  bondId={bond.id.toString()}
+                  tokenType={isMentor ? "MENTOR_PROOF" : "LEARNER_PROOF"}
+                />
+              </div>
+            )}
+
+            {/* Share card — shown when completed */}
+            {isCompleted && isParty && (
+              <ShareCard
+                skillTitle={bond.skillTitle}
+                mentorName={truncate(bond.mentor)}
+                bondId={bond.id.toString()}
+              />
+            )}
           </div>
         </div>
       </div>
