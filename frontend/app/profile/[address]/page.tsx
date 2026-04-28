@@ -90,17 +90,17 @@ function ProfileBondLoader({
 function StatBox({ value, label }: { value: string | number; label: string }) {
   return (
     <div style={{
-      display: "flex", flexDirection: "column", gap: 4,
-      padding: "16px 20px",
+      display: "flex", flexDirection: "column", gap: 6,
+      padding: "20px 28px",
       borderRadius: "var(--radius-md)",
       border: "1px solid var(--border-default)",
       backgroundColor: "var(--bg-elevated)",
-      minWidth: 100,
+      minWidth: 120,
     }}>
-      <span style={{ fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 800, color: "var(--accent-teal)", lineHeight: 1 }}>
+      <span style={{ fontFamily: "var(--font-display)", fontSize: 32, fontWeight: 800, color: "var(--accent-teal)", lineHeight: 1 }}>
         {value}
       </span>
-      <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+      <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
         {label}
       </span>
     </div>
@@ -111,17 +111,17 @@ function StatBox({ value, label }: { value: string | number; label: string }) {
 
 function SectionHeader({ title, count }: { title: string; count?: number }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-      <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 17, color: "var(--text-primary)", margin: 0 }}>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+      <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 20, color: "var(--text-primary)", margin: 0 }}>
         {title}
       </h2>
       {count !== undefined && (
         <span style={{
-          fontFamily: "var(--font-mono)", fontSize: 11,
+          fontFamily: "var(--font-mono)", fontSize: 12,
           color: "var(--accent-teal)",
           backgroundColor: "var(--accent-teal-dim)",
           border: "1px solid var(--accent-teal-border)",
-          borderRadius: "var(--radius-full)", padding: "2px 10px",
+          borderRadius: "var(--radius-full)", padding: "4px 12px",
         }}>
           {count}
         </span>
@@ -171,6 +171,26 @@ function ProfileInner({ address }: { address: `0x${string}` }) {
       {/* Main */}
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "48px 40px 80px" }}>
 
+        {/* ── Back button ── */}
+        <button
+          onClick={() => router.back()}
+          style={{
+            display: "flex", alignItems: "center", gap: 8,
+            background: "none", border: "none", cursor: "pointer", padding: 0,
+            marginBottom: 32, minHeight: 44,
+            color: "var(--text-muted)",
+            transition: "color var(--transition-fast)",
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = "var(--text-primary)")}
+          onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}
+          aria-label="Go back"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 12H5M12 5l-7 7 7 7"/>
+          </svg>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 13 }}>Back</span>
+        </button>
+
         {/* ── Profile header ── */}
         <div style={{
           display: "flex", alignItems: "flex-start", gap: 28,
@@ -181,20 +201,20 @@ function ProfileInner({ address }: { address: `0x${string}` }) {
 
           {/* Identity */}
           <div style={{ flex: 1, minWidth: 200 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8, flexWrap: "wrap" }}>
               <h1 style={{
-                fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 28,
+                fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 32,
                 color: "var(--text-primary)", letterSpacing: "-0.02em", margin: 0,
               }}>
                 {ensName ?? truncate(address)}
               </h1>
               {isOwnProfile && (
                 <span style={{
-                  fontFamily: "var(--font-mono)", fontSize: 10,
+                  fontFamily: "var(--font-mono)", fontSize: 11,
                   color: "var(--accent-teal)",
                   backgroundColor: "var(--accent-teal-dim)",
                   border: "1px solid var(--accent-teal-border)",
-                  borderRadius: "var(--radius-full)", padding: "3px 10px",
+                  borderRadius: "var(--radius-full)", padding: "4px 12px",
                 }}>
                   You
                 </span>
@@ -202,13 +222,13 @@ function ProfileInner({ address }: { address: `0x${string}` }) {
             </div>
 
             {/* Full address */}
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-muted)", marginBottom: 12, wordBreak: "break-all" }}>
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--text-muted)", marginBottom: 14, wordBreak: "break-all" }}>
               {address}
             </p>
 
             {/* Share profile link */}
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-muted)" }}>
                 cosigned.xyz/profile/{truncate(address)}
               </span>
               <button
@@ -387,19 +407,19 @@ function BondHistoryRow({
       onMouseEnter={e => (e.currentTarget.style.borderColor = "var(--accent-teal-border)")}
       onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--border-subtle)")}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-        <span style={{ fontFamily: "var(--font-display)", fontSize: 14, fontWeight: 600, color: "var(--text-primary)" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <span style={{ fontFamily: "var(--font-display)", fontSize: 15, fontWeight: 600, color: "var(--text-primary)" }}>
           {bond.skillTitle || "Untitled Bond"}
         </span>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)" }}>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-muted)" }}>
           {role} · with {truncate(other)}
         </span>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: statusColor }}>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: statusColor }}>
           {statusLabel}
         </span>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)" }}>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)" }}>
           #{bond.id.toString()}
         </span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
