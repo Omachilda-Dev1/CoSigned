@@ -75,13 +75,13 @@ export default function Home() {
   return (
     <div
       className="min-h-screen font-[family-name:var(--font-syne)]"
-      style={{ backgroundColor: "var(--bg)", color: "var(--text)" }}
+      style={{ backgroundColor: "var(--bg-page)", color: "var(--text-primary)" }}
     >
       {/* ── Nav ── */}
       <nav
         className="sticky top-0 z-50"
         style={{
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          borderBottom: "1px solid var(--nav-border)",
           backgroundColor: "var(--nav-bg)",
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
@@ -93,15 +93,15 @@ export default function Home() {
             <ThemeToggle />
             <span
               className="hidden sm:inline text-xs font-[family-name:var(--font-dm-mono)] px-3 py-1 rounded"
-              style={{ color: "var(--text-muted)", border: "1px solid rgba(255,255,255,0.08)" }}
+              style={{ color: "var(--text-muted)", border: "1px solid var(--border-default)" }}
             >
               Base Sepolia
             </span>
             <button
               onClick={() => router.push("/dashboard")}
               className="hidden sm:inline text-xs font-[family-name:var(--font-dm-mono)] px-3 py-1 rounded"
-              style={{ color: "var(--text-muted)", border: "1px solid rgba(255,255,255,0.08)", background: "transparent", cursor: "pointer", minHeight: 44, transition: "color 0.15s" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "#F0F0F5")}
+              style={{ color: "var(--text-muted)", border: "1px solid var(--border-default)", background: "transparent", cursor: "pointer", minHeight: 44, transition: "color 0.15s" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "var(--text-primary)")}
               onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}
               aria-label="Go to dashboard"
             >
@@ -121,17 +121,17 @@ export default function Home() {
             <motion.h1
               variants={fadeUp}
               className="font-black leading-[1.05] tracking-tight mb-6"
-              style={{ fontSize: "clamp(40px, 5vw, 64px)", color: "#F0F0F5" }}
+              style={{ fontSize: "clamp(40px, 5vw, 64px)", color: "var(--text-primary)" }}
             >
               Your skills.{" "}
-              <span style={{ color: "#E8FF47" }}>Witnessed</span>
+              <span style={{ color: "var(--accent-teal)" }}>Witnessed</span>
               {" "}on-chain.
             </motion.h1>
 
             <motion.p
               variants={fadeUp}
               className="text-base leading-relaxed mb-10"
-              style={{ color: "rgba(240,240,245,0.72)", maxWidth: 480 }}
+              style={{ color: "var(--text-secondary)", maxWidth: 480 }}
             >
               CoSigned is a dual-signature mentorship protocol. Mentor and learner
               co-sign a Bond on-chain. When both sign, a soulbound NFT is minted to
@@ -142,14 +142,14 @@ export default function Home() {
               <button
                 onClick={() => router.push("/bond/create")}
                 style={{
-                  backgroundColor: "#4DFFD2", color: "#0A0A0F",
-                  fontFamily: "var(--font-syne, sans-serif)", fontWeight: 700, fontSize: 15,
+                  backgroundColor: "var(--accent-teal)", color: "var(--text-inverse)",
+                  fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15,
                   padding: "16px 32px", borderRadius: 12, border: "none",
                   cursor: "pointer", minHeight: 44,
-                  transition: "background-color 200ms ease",
+                  transition: "opacity 200ms ease",
                 }}
-                onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#E8FF47")}
-                onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#4DFFD2")}
+                onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
+                onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
                 aria-label="Start a Bond"
               >
                 Start a Bond
@@ -158,20 +158,20 @@ export default function Home() {
                 onClick={() => router.push("/explore")}
                 style={{
                   backgroundColor: "transparent",
-                  border: "1px solid rgba(240,240,245,0.2)",
-                  color: "rgba(240,240,245,0.5)",
-                  fontFamily: "var(--font-syne, sans-serif)", fontWeight: 500, fontSize: 14,
+                  border: "1px solid var(--border-default)",
+                  color: "var(--text-muted)",
+                  fontFamily: "var(--font-display)", fontWeight: 500, fontSize: 14,
                   padding: "16px 32px", borderRadius: 12,
                   cursor: "pointer", minHeight: 44,
                   transition: "border-color 200ms ease, color 200ms ease",
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = "rgba(240,240,245,0.4)";
-                  e.currentTarget.style.color = "rgba(240,240,245,0.8)";
+                  e.currentTarget.style.borderColor = "var(--border-strong)";
+                  e.currentTarget.style.color = "var(--text-secondary)";
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = "rgba(240,240,245,0.2)";
-                  e.currentTarget.style.color = "rgba(240,240,245,0.5)";
+                  e.currentTarget.style.borderColor = "var(--border-default)";
+                  e.currentTarget.style.color = "var(--text-muted)";
                 }}
                 aria-label="Explore open bonds"
               >
@@ -183,7 +183,7 @@ export default function Home() {
             <motion.div
               variants={fadeUp}
               className="flex items-center mt-16 pt-8"
-              style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+              style={{ borderTop: "1px solid var(--border-subtle)" }}
             >
               {[
                 { value: totalBonds, label: "Total Bonds Created" },
@@ -193,24 +193,24 @@ export default function Home() {
                 { value: "2", label: "Contracts Verified" },
               ].map((item, i) =>
                 item === null ? (
-                  <div key={i} style={{ width: 1, height: 32, backgroundColor: "rgba(255,255,255,0.08)", margin: "0 28px", flexShrink: 0 }} />
+                  <div key={i} style={{ width: 1, height: 32, backgroundColor: "var(--border-default)", margin: "0 28px", flexShrink: 0 }} />
                 ) : (
                   <div key={item.label} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       {item.dot && (
                         <span style={{
                           width: 8, height: 8, borderRadius: "50%",
-                          backgroundColor: "#4DFFD2",
-                          boxShadow: "0 0 6px #4DFFD2",
+                          backgroundColor: "var(--accent-teal)",
+                          boxShadow: "0 0 6px var(--accent-teal)",
                           animation: "pulse 2s ease-in-out infinite",
                           flexShrink: 0,
                         }} />
                       )}
-                      <span style={{ fontFamily: "var(--font-syne, sans-serif)", fontWeight: 700, fontSize: 28, color: "#E8FF47", lineHeight: 1 }}>
+                      <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 28, color: "var(--accent-teal)", lineHeight: 1 }}>
                         {item.value}
                       </span>
                     </div>
-                    <span style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11, color: "#5A5A7A", textTransform: "uppercase", letterSpacing: "0.15em" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.15em" }}>
                       {item.label}
                     </span>
                   </div>
@@ -228,8 +228,8 @@ export default function Home() {
             style={{
               borderRadius: 20,
               padding: 20,
-              border: "1px solid rgba(77,255,210,0.15)",
-              backgroundColor: "rgba(77,255,210,0.03)",
+              border: "1px solid var(--accent-teal-border)",
+              backgroundColor: "var(--accent-teal-dim)",
             }}
           >
             <HeroIllustration />
@@ -240,11 +240,11 @@ export default function Home() {
       {/* ── How It Works ── */}
       <section
         className="px-8 py-24"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+        style={{ borderTop: "1px solid var(--border-subtle)", borderBottom: "1px solid var(--border-subtle)" }}
       >
         <div className="max-w-6xl mx-auto">
           <div className="flex items-baseline justify-between mb-12">
-            <h2 className="text-2xl font-black" style={{ color: "var(--text)" }}>
+            <h2 className="text-2xl font-black" style={{ color: "var(--text-primary)" }}>
               How It Works
             </h2>
             <span className="text-xs font-[family-name:var(--font-dm-mono)]" style={{ color: "var(--text-muted)" }}>
@@ -254,7 +254,7 @@ export default function Home() {
 
           <motion.div
             className="divide-y"
-            style={{ borderColor: "var(--border)" }}
+            style={{ borderColor: "var(--border-subtle)" }}
             variants={stagger}
             initial="hidden"
             whileInView="show"
@@ -269,10 +269,10 @@ export default function Home() {
                 <span className="col-span-1 text-xs font-[family-name:var(--font-dm-mono)] pt-0.5" style={{ color: "var(--text-muted)" }}>
                   {step.n}
                 </span>
-                <h3 className="col-span-3 font-bold text-base" style={{ color: "var(--text)" }}>
+                <h3 className="col-span-3 font-bold text-base" style={{ color: "var(--text-primary)" }}>
                   {step.title}
                 </h3>
-                <p className="col-span-8 text-sm leading-relaxed" style={{ color: "var(--text-sub)" }}>
+                <p className="col-span-8 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
                   {step.desc}
                 </p>
               </motion.div>
@@ -284,14 +284,14 @@ export default function Home() {
       {/* ── Why CoSigned ── */}
       <section className="px-6 py-20 max-w-6xl mx-auto">
         <div className="flex items-baseline justify-between mb-12">
-          <h2 className="text-2xl font-black" style={{ color: "var(--text)" }}>
+          <h2 className="text-2xl font-black" style={{ color: "var(--text-primary)" }}>
             Why CoSigned
           </h2>
         </div>
 
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-3 gap-px"
-          style={{ backgroundColor: "var(--border)" }}
+          style={{ backgroundColor: "var(--border-default)" }}
           variants={stagger}
           initial="hidden"
           whileInView="show"
@@ -302,18 +302,18 @@ export default function Home() {
               key={label}
               variants={fadeUp}
               className="flex flex-col justify-between p-8 gap-8"
-              style={{ backgroundColor: "var(--bg-card)" }}
+              style={{ backgroundColor: "var(--bg-surface)" }}
             >
               <div className="flex flex-col gap-3">
                 <h3 className="text-xs font-[family-name:var(--font-dm-mono)] uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
                   {label}
                 </h3>
-                <p className="text-sm leading-relaxed" style={{ color: "var(--text-sub)" }}>
+                <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
                   {body}
                 </p>
               </div>
-              <div className="pt-6" style={{ borderTop: "1px solid var(--border)" }}>
-                <p className="text-2xl font-black" style={{ color: "var(--text)" }}>{stat}</p>
+              <div className="pt-6" style={{ borderTop: "1px solid var(--border-subtle)" }}>
+                <p className="text-2xl font-black" style={{ color: "var(--text-primary)" }}>{stat}</p>
                 <p className="text-xs font-[family-name:var(--font-dm-mono)] mt-1" style={{ color: "var(--text-muted)" }}>{statLabel}</p>
               </div>
             </motion.div>
@@ -322,10 +322,10 @@ export default function Home() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="px-6 py-24" style={{ borderTop: "1px solid var(--border)" }}>
+      <section className="px-6 py-24" style={{ borderTop: "1px solid var(--border-subtle)" }}>
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-end justify-between gap-10">
           <div>
-            <h2 className="text-4xl sm:text-5xl font-black leading-tight mb-4" style={{ color: "var(--text)" }}>
+            <h2 className="text-4xl sm:text-5xl font-black leading-tight mb-4" style={{ color: "var(--text-primary)" }}>
               Ready to get
               <br />
               CoSigned?
@@ -336,8 +336,10 @@ export default function Home() {
           </div>
           <button
             onClick={() => router.push("/bond/create")}
-            className="self-start sm:self-auto px-10 py-4 rounded font-bold text-base transition-opacity hover:opacity-80 whitespace-nowrap"
-            style={{ backgroundColor: "var(--accent)", color: "#0D0D0D" }}
+            className="self-start sm:self-auto px-10 py-4 rounded font-bold text-base whitespace-nowrap"
+            style={{ backgroundColor: "var(--accent-teal)", color: "var(--text-inverse)", transition: "opacity 0.15s" }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
+            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
             aria-label="Start a Bond"
           >
             Start a Bond Today
@@ -348,7 +350,7 @@ export default function Home() {
       {/* ── Footer ── */}
       <footer
         className="px-6 py-6 max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"
-        style={{ borderTop: "1px solid var(--border)" }}
+        style={{ borderTop: "1px solid var(--border-subtle)" }}
       >
         <Logo variant="icon" width={28} height={28} />
         <p className="text-xs font-[family-name:var(--font-dm-mono)]" style={{ color: "var(--text-muted)" }}>
