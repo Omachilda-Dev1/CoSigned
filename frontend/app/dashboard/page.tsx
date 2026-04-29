@@ -32,7 +32,7 @@ function SkeletonCard() {
 function BondCardLoader({ bondId, role }: { bondId: bigint; role: "mentor" | "learner" }) {
   const { bond, isLoading } = useBond(bondId);
   if (isLoading) return <SkeletonCard />;
-  if (!bond || bond.id === 0n) return null;
+  if (!bond || bond.id === BigInt(0)) return null;
   return <BondCard bond={bond} role={role} />;
 }
 
@@ -96,20 +96,31 @@ function EmptyState({ role, onAction }: { role: "mentor" | "learner"; onAction: 
 // ─── Stat pill ────────────────────────────────────────────────────────────────
 
 function StatPill({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+  const accentColor = accent ? "var(--accent-teal)" : "var(--border-default)";
   return (
     <div style={{
-      display: "flex", flexDirection: "column", gap: 4,
-      padding: "16px 24px", borderRadius: "var(--radius-md)",
-      border: `1px solid ${accent ? "var(--accent-teal-border)" : "var(--border-default)"}`,
-      backgroundColor: accent ? "var(--accent-teal-dim)" : "var(--bg-elevated)",
-      minWidth: 120,
+      position: "relative",
+      borderRadius: 16,
+      background: accentColor,
+      padding: 6,
+      boxShadow: accent ? "0 4px 20px rgba(77,255,210,0.2)" : "0 4px 16px rgba(0,0,0,0.12)",
+      minWidth: 110,
     }}>
-      <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-        {label}
-      </span>
-      <span style={{ fontFamily: "var(--font-display)", fontSize: 26, fontWeight: 800, color: accent ? "var(--accent-teal)" : "var(--text-primary)", letterSpacing: "-0.02em", lineHeight: 1 }}>
-        {value}
-      </span>
+      <div style={{
+        borderRadius: 11,
+        backgroundColor: "var(--bg-surface)",
+        border: "1px solid var(--border-subtle)",
+        boxShadow: "inset 0 1px 3px rgba(0,0,0,0.1)",
+        padding: "14px 20px",
+        display: "flex", flexDirection: "column", gap: 4,
+      }}>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+          {label}
+        </span>
+        <span style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 800, color: accent ? "var(--accent-teal)" : "var(--text-primary)", letterSpacing: "-0.02em", lineHeight: 1 }}>
+          {value}
+        </span>
+      </div>
     </div>
   );
 }
