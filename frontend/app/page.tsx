@@ -1,13 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAccount } from "wagmi";
 import { motion } from "framer-motion";
+import { useAccount } from "wagmi";
 import Logo from "@/components/ui/Logo";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 import HeroIllustration from "@/components/ui/HeroIllustration";
-import ConnectButton from "@/components/wallet/ConnectButton";
 import { useBondCounter } from "@/hooks/useCoSigned";
 import type { Variants } from "framer-motion";
 
@@ -57,64 +54,28 @@ const stagger: Variants = {
 export default function Home() {
   const router = useRouter();
   const { count, isLoading: statsLoading } = useBondCounter();
-  const { address } = useAccount();
-
-  // Auto-redirect to dashboard when wallet connects
-  useEffect(() => {
-    if (address) {
-      router.push("/dashboard");
-    }
-  }, [address, router]);
+  useAccount(); // keep wagmi context warm
 
   // Stats
-
-  const totalBonds     = statsLoading ? "—" : count.toString();
-  const coSigned       = statsLoading ? "—" : count.toString(); // same as total — every bond that exists was co-signed
-  const activeMentors  = "—"; // requires subgraph — placeholder until Day 25
+  const totalBonds    = statsLoading ? "—" : count.toString();
+  const activeMentors = "—";
 
   return (
     <div
       className="min-h-screen font-[family-name:var(--font-syne)]"
       style={{ backgroundColor: "var(--bg-page)", color: "var(--text-primary)" }}
     >
-      {/* ── Nav ── */}
-      <nav
-        className="sticky top-0 z-50"
-        style={{
-          borderBottom: "1px solid var(--nav-border)",
-          backgroundColor: "var(--nav-bg)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-        }}
-      >
-        <div className="flex items-center justify-between px-8 py-4 max-w-7xl mx-auto">
-          <Logo width={180} height={46} />
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <span
-              className="hidden sm:inline text-xs font-[family-name:var(--font-dm-mono)] px-3 py-1 rounded"
-              style={{ color: "var(--text-muted)", border: "1px solid var(--border-default)" }}
-            >
-              Base Sepolia
-            </span>
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="hidden sm:inline text-xs font-[family-name:var(--font-dm-mono)] px-3 py-1 rounded"
-              style={{ color: "var(--text-muted)", border: "1px solid var(--border-default)", background: "transparent", cursor: "pointer", minHeight: 44, transition: "color 0.15s" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "var(--text-primary)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}
-              aria-label="Go to dashboard"
-            >
-              Dashboard
-            </button>
-            <ConnectButton />
-          </div>
-        </div>
-      </nav>
-
       {/* ── Hero ── */}
-      <section className="px-8 pt-24 pb-20 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <section className="px-6 pt-16 pb-16 max-w-7xl mx-auto">
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 48,
+            alignItems: "center",
+          }}
+          className="hero-grid"
+        >
 
           {/* Left — copy */}
           <motion.div variants={stagger} initial="hidden" animate="show">

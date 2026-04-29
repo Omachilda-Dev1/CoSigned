@@ -7,6 +7,7 @@ import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { wagmiConfig } from "@/lib/wagmi";
+import Navbar from "@/components/ui/Navbar";
 import "./globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
 
@@ -14,10 +15,17 @@ const syne = Syne({ subsets: ["latin"], variable: "--font-syne", display: "swap"
 const dmMono = DM_Mono({ subsets: ["latin"], weight: ["300","400","500"], variable: "--font-dm-mono", display: "swap" });
 const queryClient = new QueryClient();
 
+// Pages that manage their own nav (have custom nav with extra buttons)
+const CUSTOM_NAV_PAGES = ["/dashboard", "/explore", "/profile"];
+
 function PageWrapper({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  // Use shared Navbar on all pages except those with custom navs
+  const useSharedNav = !CUSTOM_NAV_PAGES.some(p => pathname.startsWith(p));
+
   return (
     <div key={pathname} className="page-enter">
+      {useSharedNav && <Navbar />}
       {children}
     </div>
   );
