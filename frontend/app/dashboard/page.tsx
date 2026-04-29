@@ -5,8 +5,6 @@ import { useAccount } from "wagmi";
 import WalletGuard from "@/components/wallet/WalletGuard";
 import BondCard from "@/components/bond/BondCard";
 import Logo from "@/components/ui/Logo";
-import ConnectButton from "@/components/wallet/ConnectButton";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useUserBonds, useBond, useBondCounter } from "@/hooks/useCoSigned";
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
@@ -185,83 +183,67 @@ function DashboardInner() {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg-page)", color: "var(--text-primary)" }}>
 
-      {/* Nav */}
-      <nav style={{
-        position: "sticky", top: 0, zIndex: 50,
-        borderBottom: "1px solid var(--nav-border)",
-        backgroundColor: "var(--nav-bg)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 40px", maxWidth: 1280, margin: "0 auto" }}>
-          <button onClick={() => router.push("/")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 0 }} aria-label="Home">
-            <Logo width={156} height={40} />
-          </button>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <button
-              onClick={() => router.push("/bond/create")}
-              style={{
-                fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700,
-                padding: "8px 18px", borderRadius: "var(--radius-sm)",
-                backgroundColor: "var(--accent-teal)", color: "var(--text-inverse)",
-                border: "none", cursor: "pointer", transition: "opacity var(--transition-fast)", minHeight: 44,
-              }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
-              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
-            >
-              + New Bond
-            </button>
-            <button
-              onClick={() => router.push(`/profile/${address}`)}
-              style={{
-                fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 600,
-                padding: "8px 16px", borderRadius: "var(--radius-sm)",
-                border: "1px solid var(--border-default)",
-                backgroundColor: "var(--bg-elevated)",
-                color: "var(--text-secondary)",
-                cursor: "pointer", transition: "all var(--transition-fast)", minHeight: 44,
-                display: "flex", alignItems: "center", gap: 6,
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = "var(--accent-teal-border)";
-                e.currentTarget.style.color = "var(--accent-teal)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = "var(--border-default)";
-                e.currentTarget.style.color = "var(--text-secondary)";
-              }}
-              aria-label="View my profile"
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-              </svg>
-              My Profile
-            </button>
-            <ThemeToggle />
-            <ConnectButton />
-          </div>
-        </div>
-      </nav>
+      {/* Shared Navbar handles logo, nav links, theme toggle, connect */}
 
       {/* Main */}
-      <main style={{ maxWidth: 1280, margin: "0 auto", padding: "48px 40px 80px" }}>
+      <main style={{ maxWidth: 1280, margin: "0 auto", padding: "clamp(24px, 4vw, 48px) clamp(16px, 4vw, 40px) 80px" }}>
 
         {/* Header */}
-        <div style={{ marginBottom: 40, paddingLeft: 16, borderLeft: "3px solid var(--accent-yellow)" }}>
+        <div style={{ marginBottom: 32, paddingLeft: 16, borderLeft: "3px solid var(--accent-yellow)" }}>
           <p style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-muted)", marginBottom: 6 }}>
             Welcome back · <span style={{ color: "var(--accent-teal)" }}>{shortAddr}</span>
           </p>
-          <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 32, color: "var(--text-primary)", letterSpacing: "-0.025em", margin: "0 0 8px" }}>
-            Your Bonds
-          </h1>
-          <p style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--text-muted)" }}>
-            Manage your active mentorships and learning engagements
-          </p>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+            <div>
+              <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(24px, 4vw, 32px)", color: "var(--text-primary)", letterSpacing: "-0.025em", margin: "0 0 6px" }}>
+                Your Bonds
+              </h1>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--text-muted)" }}>
+                Manage your active mentorships and learning engagements
+              </p>
+            </div>
+            {/* Action buttons — moved from nav to header */}
+            <div style={{ display: "flex", gap: 8, flexShrink: 0, flexWrap: "wrap" }}>
+              <button
+                onClick={() => router.push("/bond/create")}
+                style={{
+                  fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700,
+                  padding: "8px 16px", borderRadius: "var(--radius-sm)",
+                  backgroundColor: "var(--accent-teal)", color: "var(--text-inverse)",
+                  border: "none", cursor: "pointer", minHeight: 44,
+                  transition: "opacity var(--transition-fast)",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
+                onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+              >
+                + New Bond
+              </button>
+              <button
+                onClick={() => router.push(`/profile/${address}`)}
+                style={{
+                  fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 600,
+                  padding: "8px 14px", borderRadius: "var(--radius-sm)",
+                  border: "1px solid var(--border-default)",
+                  backgroundColor: "var(--bg-elevated)",
+                  color: "var(--text-secondary)",
+                  cursor: "pointer", minHeight: 44,
+                  display: "flex", alignItems: "center", gap: 6,
+                  transition: "all var(--transition-fast)",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--accent-teal-border)"; e.currentTarget.style.color = "var(--accent-teal)"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border-default)"; e.currentTarget.style.color = "var(--text-secondary)"; }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+                My Profile
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Stats */}
-        <div style={{ display: "flex", gap: 12, marginBottom: 48, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 10, marginBottom: 40, flexWrap: "wrap" }}>
           <StatPill label="Total Bonds" value={count.toString()} accent />
           <StatPill label="Mentoring"   value={mentorIds.length.toString()} />
           <StatPill label="Learning"    value={learnerIds.length.toString()} />
@@ -276,8 +258,8 @@ function DashboardInner() {
           <div style={{ flex: 1, height: 1, backgroundColor: "var(--border-subtle)" }} />
         </div>
 
-        {/* Panels */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
+        {/* Panels — responsive grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 32 }}>
           <BondPanel title="Bonds I'm Mentoring" subtitle="Skills you're teaching on-chain"   bondIds={mentorIds}  role="mentor"  isLoading={isLoading} onAction={() => router.push("/bond/create")} />
           <BondPanel title="Bonds I'm Learning"  subtitle="Skills you're acquiring on-chain"  bondIds={learnerIds} role="learner" isLoading={isLoading} onAction={() => router.push("/explore")} />
         </div>
@@ -285,31 +267,16 @@ function DashboardInner() {
 
       {/* Footer */}
       <footer style={{ borderTop: "1px solid var(--border-subtle)", backgroundColor: "var(--bg-page)" }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto", padding: "20px 40px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", padding: "16px clamp(16px, 4vw, 40px)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <Logo variant="icon" width={22} height={22} />
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)" }}>
               CoSigned — Your skills. Witnessed on-chain.
             </span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-            <a href="https://sepolia.basescan.org/address/0xd1D2a913eb75B43125AA860bea1BabC27F2d550A" target="_blank" rel="noopener noreferrer"
-              style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)", textDecoration: "none" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "var(--accent-teal)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}
-            >BaseScan ↗</a>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)" }}>Base Sepolia · Chain 84532</span>
-          </div>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)" }}>Base Sepolia · Chain 84532</span>
         </div>
       </footer>
-
-      <style>{`
-        @media (max-width: 768px) {
-          main { padding: 32px 20px 60px !important; }
-          nav > div { padding: 12px 20px !important; }
-          div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; gap: 40px !important; }
-        }
-      `}</style>
     </div>
   );
 }
