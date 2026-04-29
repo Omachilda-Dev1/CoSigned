@@ -15,8 +15,8 @@ const syne = Syne({ subsets: ["latin"], variable: "--font-syne", display: "swap"
 const dmMono = DM_Mono({ subsets: ["latin"], weight: ["300","400","500"], variable: "--font-dm-mono", display: "swap" });
 const queryClient = new QueryClient();
 
-// Pages that manage their own nav (have custom nav with extra buttons)
-const CUSTOM_NAV_PAGES = ["/dashboard", "/explore", "/profile"];
+// Pages that manage their own nav
+const CUSTOM_NAV_PAGES = ["/profile"];
 
 function PageWrapper({ children }: { children: ReactNode }) {
   const pathname = usePathname();

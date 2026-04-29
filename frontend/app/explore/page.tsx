@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Logo from "@/components/ui/Logo";
-import ConnectButton from "@/components/wallet/ConnectButton";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { useBond, useBondCounter } from "@/hooks/useCoSigned";
 import { BondStatus } from "@/types/bond";
@@ -142,35 +140,8 @@ export default function ExplorePage() {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg-page)", color: "var(--text-primary)" }}>
 
-      {/* Nav */}
-      <nav style={{
-        position: "sticky", top: 0, zIndex: 50,
-        borderBottom: "1px solid var(--nav-border)",
-        backgroundColor: "var(--nav-bg)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 40px", maxWidth: 1280, margin: "0 auto" }}>
-          <button onClick={() => router.push("/")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 0 }}>
-            <Logo width={156} height={40} />
-          </button>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <button
-              onClick={() => router.push("/dashboard")}
-              style={{ fontFamily: "var(--font-mono)", fontSize: 12, padding: "8px 16px", borderRadius: "var(--radius-sm)", border: "1px solid var(--border-default)", backgroundColor: "transparent", color: "var(--text-muted)", cursor: "pointer", minHeight: 44 }}
-              onMouseEnter={e => (e.currentTarget.style.color = "var(--text-primary)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}
-            >
-              Dashboard
-            </button>
-            <ThemeToggle />
-            <ConnectButton />
-          </div>
-        </div>
-      </nav>
-
       {/* Main */}
-      <main style={{ maxWidth: 1100, margin: "0 auto", padding: "48px 40px 80px" }}>
+      <main style={{ maxWidth: 1100, margin: "0 auto", padding: "clamp(24px,4vw,48px) clamp(16px,4vw,40px) 80px" }}>
 
         {/* Header */}
         <div style={{ marginBottom: 40 }}>
