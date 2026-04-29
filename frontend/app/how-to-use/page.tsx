@@ -2,8 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import Logo from "@/components/ui/Logo";
-import ConnectButton from "@/components/wallet/ConnectButton";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 
 // ─── Step Data ────────────────────────────────────────────────────────────────
 
@@ -234,53 +232,6 @@ export default function HowToUsePage() {
       className="min-h-screen font-[family-name:var(--font-syne)]"
       style={{ backgroundColor: "var(--bg-page)", color: "var(--text-primary)" }}
     >
-      {/* ── Nav ── */}
-      <nav
-        className="sticky top-0 z-50"
-        style={{
-          borderBottom: "1px solid var(--nav-border)",
-          backgroundColor: "var(--nav-bg)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-        }}
-      >
-        <div className="flex items-center justify-between px-8 py-4 max-w-7xl mx-auto">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => router.push("/")}
-              style={{
-                background: "transparent",
-                border: "1px solid var(--border-default)",
-                borderRadius: "var(--radius-sm)",
-                padding: "8px 12px",
-                cursor: "pointer",
-                color: "var(--text-muted)",
-                fontSize: 12,
-                fontFamily: "var(--font-mono)",
-                transition: "color 0.15s, border-color 0.15s",
-                minHeight: 44,
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.color = "var(--text-primary)";
-                e.currentTarget.style.borderColor = "var(--border-strong)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.color = "var(--text-muted)";
-                e.currentTarget.style.borderColor = "var(--border-default)";
-              }}
-              aria-label="Back to home"
-            >
-              ← Back
-            </button>
-            <Logo width={180} height={46} />
-          </div>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <ConnectButton />
-          </div>
-        </div>
-      </nav>
-
       {/* ── Hero ── */}
       <section className="px-8 pt-20 pb-16 max-w-6xl mx-auto text-center">
         <h1
