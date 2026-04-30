@@ -591,4 +591,21 @@ NEXT_PUBLIC_COSIGNED_NFT_ADDRESS=<COSIGNED_NFT_ADDRESS>
 
 ---
 
-<!-- Day 21+ entries will be added here -->
+## [Day 25] — 2026-04-30 ✅ CHECKPOINT 2
+
+### Verified
+- `npx hardhat test` → **13 passing (7s)** — full suite clean
+- Both contracts live and verified on Base Sepolia
+- All 7 frontend pages complete and functional
+- Wallet connection working (RainbowKit + MetaMask)
+- Responsive on mobile with hamburger menu
+
+### Added
+- `docs/checkpoint-2.md` — full Days 16–25 summary
+
+### Updated
+- `README.md` — roadmap: Days 16–24 ✅ Done, Checkpoint 2 ✅ Done
+
+---
+
+<!-- Day 26+ entries will be added here -->

@@ -98,9 +98,9 @@ If either party ghosts after the deadline, the other can raise a dispute. After 
 | Idea & Scope | 1–3 | ✅ Done | Architecture, design, environment setup |
 | Repo Setup | 4 | ✅ Done | Public repo, production README |
 | Core Build | 5–15 | ✅ Done | Smart contracts (13 tests), testnet deploy + verified |
-| Advanced Features | 16–24 | 🔨 Building | Full frontend, all 6 pages |
-| Checkpoint 2 | 25 | ⏳ Upcoming | End-to-end testnet walkthrough |
-| Testing | 26–28 | ⏳ Upcoming | Real user testing, polish, mobile |
+| Advanced Features | 16–24 | ✅ Done | Full frontend (7 pages), wallet, IPFS, NFT reveal |
+| Checkpoint 2 | 25 | ✅ Done | End-to-end testnet walkthrough |
+| Testing | 26–28 | 🔨 Building | Real user testing, polish, mobile |
 | Deploy | 29 | ⏳ Upcoming | Vercel deploy, final docs |
 | Demo Day | 30 | ⏳ Upcoming | Demo video, final post, submission |
 
