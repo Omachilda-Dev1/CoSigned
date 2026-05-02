@@ -59,11 +59,7 @@ export default function BondTimeline({ status, mentorSigned, learnerSigned }: Bo
                   boxShadow: (done || current) && !disputed ? `0 0 12px ${dotColor}40` : "none",
                   transition: "all 0.3s ease",
                 }}>
-                  {done && status !== BondStatus.Completed ? (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0A0A0F" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M20 6L9 17l-5-5"/>
-                    </svg>
-                  ) : status === BondStatus.Completed && i === 3 ? (
+                  {done && !disputed ? (
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0A0A0F" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M20 6L9 17l-5-5"/>
                     </svg>
