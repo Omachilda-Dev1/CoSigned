@@ -48,7 +48,8 @@ function Field({
 }: {
   label: string; id: string; type?: string; placeholder?: string;
   rows?: number; required?: boolean; error?: string;
-  register: ReturnType<typeof useForm<FormValues>["register"]>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  register: any;
 }) {
   const inputStyle: React.CSSProperties = {
     width: "100%",

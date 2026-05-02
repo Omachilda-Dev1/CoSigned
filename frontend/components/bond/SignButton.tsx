@@ -85,7 +85,7 @@ export default function SignButton({ bond }: SignButtonProps) {
 
   // ── Accept Bond ──────────────────────────────────────────────────────────
   if (action === "accept") {
-    const stakeEth = bond.stakeAmount > 0n ? formatEther(bond.stakeAmount) : "0.01";
+    const stakeEth = bond.stakeAmount > BigInt(0) ? formatEther(bond.stakeAmount) : "0.01";
     return (
       <div>
         <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11, color: "#5A5A7A", marginBottom: 8 }}>

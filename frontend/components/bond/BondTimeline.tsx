@@ -41,7 +41,7 @@ export default function BondTimeline({ status, mentorSigned, learnerSigned }: Bo
           const disputed = isDisputed && i === 2;
 
           const dotColor = disputed ? "#FF4D6D"
-            : done || status === BondStatus.Completed ? "#4DFFD2"
+            : done ? "#4DFFD2"
             : current ? "#E8FF47"
             : "rgba(255,255,255,0.12)";
 
@@ -53,7 +53,7 @@ export default function BondTimeline({ status, mentorSigned, learnerSigned }: Bo
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, flexShrink: 0 }}>
                 <div style={{
                   width: 32, height: 32, borderRadius: "50%",
-                  backgroundColor: done || status === BondStatus.Completed ? "#4DFFD2" : disputed ? "rgba(255,77,109,0.15)" : current ? "rgba(232,255,71,0.12)" : "rgba(255,255,255,0.04)",
+                  backgroundColor: done ? "#4DFFD2" : disputed ? "rgba(255,77,109,0.15)" : current ? "rgba(232,255,71,0.12)" : "rgba(255,255,255,0.04)",
                   border: `2px solid ${dotColor}`,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   boxShadow: (done || current) && !disputed ? `0 0 12px ${dotColor}40` : "none",
@@ -84,7 +84,7 @@ export default function BondTimeline({ status, mentorSigned, learnerSigned }: Bo
                     fontFamily: "var(--font-dm-mono, monospace)",
                     fontSize: 10, fontWeight: 600,
                     textTransform: "uppercase", letterSpacing: "0.08em",
-                    color: disputed && i === 2 ? "#FF4D6D" : done || (status === BondStatus.Completed && i === 3) ? "#4DFFD2" : current ? "#E8FF47" : "rgba(255,255,255,0.3)",
+                    color: disputed && i === 2 ? "#FF4D6D" : done ? "#4DFFD2" : current ? "#E8FF47" : "rgba(255,255,255,0.3)",
                     margin: 0,
                   }}>
                     {disputed && i === 2 ? "Disputed" : step.label}

@@ -73,7 +73,7 @@ export default function BondDetailPage({ params }: { params: { id: string } }) {
   }
 
   // ── Not found ────────────────────────────────────────────────────────────
-  if (error || !bond || bond.id === 0n) {
+  if (error || !bond || bond.id === BigInt(0)) {
     return (
       <PageShell router={router}>
         <div style={{ textAlign: "center", padding: "80px 24px" }}>

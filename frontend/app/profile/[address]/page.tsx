@@ -65,10 +65,10 @@ function ProfileBondLoader({
 }) {
   const { bond } = useBond(bondId);
 
-  if (!bond || bond.id === 0n) return null;
+  if (!bond || bond.id === BigInt(0)) return null;
 
   // Notify parent when bond loads (for stats calculation)
-  if (onLoad && bond.id > 0n) onLoad(bond);
+  if (onLoad && bond.id > BigInt(0)) onLoad(bond);
 
   const isLearner = bond.learner.toLowerCase() === profileAddress.toLowerCase();
   const isMentor  = bond.mentor.toLowerCase()  === profileAddress.toLowerCase();
@@ -375,7 +375,7 @@ function BondHistoryRow({
   router: ReturnType<typeof useRouter>;
 }) {
   const { bond, isLoading } = useBond(bondId);
-  if (isLoading || !bond || bond.id === 0n) return null;
+  if (isLoading || !bond || bond.id === BigInt(0)) return null;
 
   const isLearner = bond.learner.toLowerCase() === profileAddress.toLowerCase();
   const role      = isLearner ? "Learner" : "Mentor";

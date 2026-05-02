@@ -83,7 +83,7 @@ function OpenBondCard({ bond }: { bond: Bond }) {
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          {bond.stakeAmount > 0n && (
+          {bond.stakeAmount > BigInt(0) && (
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)" }}>
               Stake: {formatEther(bond.stakeAmount)} ETH
             </span>
@@ -101,7 +101,7 @@ function OpenBondCard({ bond }: { bond: Bond }) {
 
 function BondLoader({ bondId, onLoad }: { bondId: bigint; onLoad: (bond: Bond) => void }) {
   const { bond } = useBond(bondId);
-  if (bond && bond.id > 0n) onLoad(bond);
+  if (bond && bond.id > BigInt(0)) onLoad(bond);
   return null;
 }
 
