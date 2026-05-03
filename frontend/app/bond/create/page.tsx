@@ -301,12 +301,12 @@ export default function CreateBondPage() {
 
           {/* ── RIGHT: Certificate preview ── */}
           <div style={{ position: "sticky", top: 88 }}>
-            <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12 }}>
+            <p style={{ fontFamily: "var(--font-dm-mono, monospace)", fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 14 }}>
               Certificate Preview
             </p>
             <CertificateCard
               learnerName={watched.learnerName ?? ""}
-              mentorName=""
+              mentorName={watched.mentorName ?? ""}
               skillTitle={watched.skillTitle ?? ""}
               successCriteria={watched.successCriteria ?? ""}
               startDate={today}

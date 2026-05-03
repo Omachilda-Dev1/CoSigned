@@ -9,7 +9,7 @@ import { wagmiConfig } from "@/lib/wagmi";
 import Navbar from "@/components/ui/Navbar";
 
 const queryClient = new QueryClient();
-const CUSTOM_NAV_PAGES = ["/profile"];
+const CUSTOM_NAV_PAGES = ["/profile", "/bond"];
 
 function PageWrapper({ children }: { children: ReactNode }) {
   const pathname = usePathname();
