@@ -191,20 +191,64 @@ export default function CertificateCard({
     fontFamily: "var(--font-syne, sans-serif)",
   };
 
-  // ── Download PNG ─────────────────────────────────────────────────────────
-  const handleDownload = useCallback(async () => {
+  // ── Download PNG — SVG-to-canvas approach (works in production) ─────────
+  const handleDownload = useCallback(() => {
     if (!cardRef.current) return;
-    const { default: html2canvas } = await import("html2canvas");
-    const canvas = await html2canvas(cardRef.current, {
-      backgroundColor: "#0A0A0F",
-      scale: 2,
-      useCORS: true,
-      logging: false,
-    });
-    const link = document.createElement("a");
-    link.download = `cosigned-${(skillTitle || "credential").replace(/\s+/g, "-").toLowerCase()}-${bondId || "preview"}.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+
+    // Serialize the card element as SVG using foreignObject
+    const el = cardRef.current;
+    const { width, height } = el.getBoundingClientRect();
+    const scale = 2;
+    const w = Math.round(width * scale);
+    const h = Math.round(height * scale);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Draw dark background
+    ctx.fillStyle = "#0A0A0F";
+    ctx.fillRect(0, 0, w, h);
+
+    // Use XMLSerializer to get the DOM as SVG foreignObject
+    const data = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
+        <foreignObject width="${w}" height="${h}">
+          <div xmlns="http://www.w3.org/1999/xhtml"
+            style="width:${width}px;height:${height}px;transform:scale(${scale});transform-origin:top left;overflow:hidden;">
+            ${el.outerHTML}
+          </div>
+        </foreignObject>
+      </svg>`;
+
+    const blob = new Blob([data], { type: "image/svg+xml;charset=utf-8" });
+    const url  = URL.createObjectURL(blob);
+    const img  = new Image();
+
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      const link = document.createElement("a");
+      link.download = `cosigned-${(skillTitle || "credential").replace(/\s+/g, "-").toLowerCase()}-${bondId || "preview"}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    };
+
+    img.onerror = () => {
+      // Fallback: open the card in a new tab for manual save
+      URL.revokeObjectURL(url);
+      const fallback = window.open("", "_blank");
+      if (fallback) {
+        fallback.document.write(`<html><body style="margin:0;background:#0A0A0F">${el.outerHTML}</body></html>`);
+        fallback.document.close();
+        fallback.focus();
+        alert("Right-click the certificate and choose 'Save image as' to download.");
+      }
+    };
+
+    img.src = url;
   }, [skillTitle, bondId]);
 
   // ── Share ────────────────────────────────────────────────────────────────
