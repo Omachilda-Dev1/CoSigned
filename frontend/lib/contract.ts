@@ -4,11 +4,10 @@
  * ABIs are copied from artifacts/ via scripts/copy-abis.js
  */
 
-import CoSignedABI    from "./abi/CoSigned.json";
-import CoSignedNFTABI from "./abi/CoSignedNFT.json";
+import CoSignedABI    from "./abi/CoSigned.json" assert { type: "json" };
+import CoSignedNFTABI from "./abi/CoSignedNFT.json" assert { type: "json" };
 
 // ── Addresses ────────────────────────────────────────────────────────────────
-// Populated from environment variables after testnet deploy (Day 14)
 
 export const COSIGNED_ADDRESS =
   (process.env.NEXT_PUBLIC_COSIGNED_ADDRESS as `0x${string}`) ||
@@ -20,8 +19,10 @@ export const COSIGNED_NFT_ADDRESS =
 
 // ── ABIs ─────────────────────────────────────────────────────────────────────
 
-export const COSIGNED_ABI     = CoSignedABI    as const;
-export const COSIGNED_NFT_ABI = CoSignedNFTABI as const;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const COSIGNED_ABI     = CoSignedABI    as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const COSIGNED_NFT_ABI = CoSignedNFTABI as any;
 
 // ── Chain ─────────────────────────────────────────────────────────────────────
 
