@@ -11,6 +11,11 @@ const dmMono = DM_Mono({ subsets: ["latin"], weight: ["300","400","500"], variab
 export const metadata: Metadata = {
   title: "CoSigned — Your skills. Witnessed on-chain.",
   description: "A Web3 DApp where mentors and learners co-sign skill Bonds on-chain.",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
