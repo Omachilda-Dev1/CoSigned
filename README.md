@@ -1,6 +1,8 @@
 # CoSigned 🔏
 ### Your skills. Witnessed on-chain.
 
+**Live:** [co-signed.vercel.app](https://co-signed.vercel.app) | **Contracts:** [BaseScan ✅](https://sepolia.basescan.org/address/0xd1D2a913eb75B43125AA860bea1BabC27F2d550A#code) | **Built in 30 days** for the #ENg30DayChallenge
+
 CoSigned is a Web3 DApp where mentors and learners co-sign skill Bonds on-chain. When both parties sign, a soulbound (non-transferable) NFT is minted to each — permanent, verifiable proof that a real mentorship happened. Neither party can fake it alone.
 
 ---
@@ -100,9 +102,9 @@ If either party ghosts after the deadline, the other can raise a dispute. After 
 | Core Build | 5–15 | ✅ Done | Smart contracts (13 tests), testnet deploy + verified |
 | Advanced Features | 16–24 | ✅ Done | Full frontend (7 pages), wallet, IPFS, NFT reveal |
 | Checkpoint 2 | 25 | ✅ Done | End-to-end testnet walkthrough |
-| Testing | 26–28 | 🔨 Building | Real user testing, polish, mobile |
-| Deploy | 29 | ⏳ Upcoming | Vercel deploy, final docs |
-| Demo Day | 30 | ⏳ Upcoming | Demo video, final post, submission |
+| Testing | 26–28 | ✅ Done | Real user testing, polish, mobile responsive |
+| Deploy | 29 | ✅ Done | Vercel deploy, final docs, ARCHITECTURE.md |
+| Demo Day | 30 | ⏳ Tomorrow | Demo video, final post, submission |
 
 ---
 

@@ -608,4 +608,35 @@ NEXT_PUBLIC_COSIGNED_NFT_ADDRESS=<COSIGNED_NFT_ADDRESS>
 
 ---
 
-<!-- Day 26+ entries will be added here -->
+## [Day 29] — 2026-05-04 🚀 SHIP DAY
+
+### Added
+- `docs/ARCHITECTURE.md` — full technical architecture:
+  - System diagram (Browser → Frontend → Contracts → IPFS)
+  - Bond state machine diagram
+  - Security analysis table
+  - Key technical decisions with rationale
+  - Frontend architecture tree
+  - Deployment URLs
+
+### Updated
+- `README.md` — live demo link, BaseScan links, roadmap all ✅
+- `frontend/app/favicon.svg` — CoSigned icon as browser favicon
+- `frontend/app/layout.tsx` — favicon metadata
+
+### Fixed
+- Certificate download — replaced html2canvas (CORS issues in prod) with SVG-to-canvas
+- Double navbar on /bond pages — added /bond to CUSTOM_NAV_PAGES
+- Mentor name on certificate preview — was hardcoded "", now reads from form
+- Missing typescript/zod/@types in package.json for Vercel build
+- ABI import — `as const` on JSON import → `as any` cast
+- BondTimeline TypeScript overlap error — removed redundant status comparison
+
+### Live
+- Frontend: https://co-signed.vercel.app
+- CoSigned: https://sepolia.basescan.org/address/0xd1D2a913eb75B43125AA860bea1BabC27F2d550A#code
+- CoSignedNFT: https://sepolia.basescan.org/address/0xC6Fce62038C0FD7f50c447a51C05492096554df5#code
+
+---
+
+<!-- Day 30 entries will be added here -->

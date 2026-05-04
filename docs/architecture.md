@@ -1,237 +1,152 @@
-# CoSigned — Architecture Design
+# CoSigned — Architecture
 
-## System Overview
+## Overview
 
-CoSigned is a dual-signature mentorship protocol. Two parties (mentor + learner) must independently confirm a mentorship is complete before any credential is issued. This makes the credential trustless — neither party can fake it alone.
+CoSigned is a dual-signature mentorship protocol on Base. A mentor and learner co-sign a Bond on-chain. When both sign, soulbound NFT credentials are minted to both wallets — permanent, verifiable proof that a real mentorship happened.
 
 ---
 
-## Bond Lifecycle Diagram
+## System Architecture
 
 ```
-                        ┌─────────────────────────────────────────────────────┐
-                        │                  BOND LIFECYCLE                      │
-                        └─────────────────────────────────────────────────────┘
-
-  MENTOR                                                              LEARNER
-    │                                                                    │
-    │  createBond(learner, skill, criteria, deadline, ipfsHash)          │
-    ▼                                                                    │
-┌──────────┐                                                            │
-│ PENDING  │ ◄── Bond exists on-chain. Learner notified off-chain.      │
-└──────────┘                                                            │
-    │                                                          acceptBond(bondId)
-    │                                                          + stake ETH
-    │                                                                    ▼
-    │                                                          ┌──────────────┐
-    │                                                          │    ACTIVE    │
-    │                                                          └──────────────┘
-    │                                                                    │
-    │◄──────────────── Mentorship happens off-chain ────────────────────►│
-    │                                                                    │
-    │  signCompletion(bondId)                                            │
-    ▼                                                                    │
-┌──────────────┐                                                        │
-│ MENTORSIGNED │                                                        │
-└──────────────┘                                                        │
-    │                                                  signCompletion(bondId)
-    │                                                                    ▼
-    │                                                          ┌──────────────┐
-    │                                                          │  COMPLETED   │
-    │                                                          └──────────────┘
-    │                                                                    │
-    │                                              ┌─────────────────────┤
-    │                                              │                     │
-    │                                    Refund ETH stake        Mint 2x Soulbound NFTs
-    │                                              │              (MENTOR_PROOF + LEARNER_PROOF)
-    │                                              ▼                     ▼
-    │                                         Learner wallet       Both wallets
-    │
-    │
-    │  ── DISPUTE PATH ──────────────────────────────────────────────────
-    │
-    │  If deadline passes and bond is still ACTIVE:
-    │
-    │  disputeBond(bondId)  ← either party can call
-    ▼
-┌──────────┐
-│ DISPUTED │  ← disputeOpenedAt timestamp stored
-└──────────┘
-    │
-    │  After 7 days with no resolution:
-    ▼
-resolveDispute(bondId)
-    │
-    ▼
-Stake refunded to learner
-(Mentor receives no credential — dispute = no completion)
+┌─────────────────────────────────────────────────────────────────┐
+│                         USER LAYER                              │
+│  Browser (MetaMask) ←→ RainbowKit ←→ Wagmi v2 ←→ viem         │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                       FRONTEND (Vercel)                         │
+│  Next.js 14 App Router                                          │
+│  ├── / (Landing)          ├── /bond/create                     │
+│  ├── /dashboard           ├── /bond/[id]                       │
+│  ├── /explore             ├── /profile/[address]               │
+│  └── /how-to-use                                               │
+│                                                                 │
+│  Components: BondCard, BondTimeline, SignButton,                │
+│              CertificateCard, NFTReveal, SoulboundBadge         │
+│  Hooks: useCreateBond, useAcceptBond, useSignCompletion,        │
+│         useDisputeBond, useBond, useUserBonds                   │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                    RPC (Base Sepolia)
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    SMART CONTRACTS (Base Sepolia)               │
+│                                                                 │
+│  CoSigned.sol                                                   │
+│  0xd1D2a913eb75B43125AA860bea1BabC27F2d550A                    │
+│  ├── createBond()     — mentor creates bond                     │
+│  ├── acceptBond()     — learner accepts + stakes ETH            │
+│  ├── signCompletion() — dual-signature completion               │
+│  ├── disputeBond()    — raise dispute after deadline            │
+│  └── resolveDispute() — refund after 7-day window              │
+│                                                                 │
+│  CoSignedNFT.sol (ERC-5192 Soulbound)                          │
+│  0xC6Fce62038C0FD7f50c447a51C05492096554df5                    │
+│  ├── mint()           — only callable by CoSigned.sol           │
+│  ├── locked()         — always returns true                     │
+│  └── transferFrom()   — always reverts                          │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      STORAGE (IPFS via Pinata)                  │
+│  Bond metadata JSON uploaded before createBond() call           │
+│  CID stored on-chain in Bond.ipfsHash                           │
+│  Metadata includes: skill, criteria, mentor, learner, dates     │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Smart Contract Data Structures (Pseudocode)
-
-### Bond Struct
-
-```
-struct Bond {
-  uint256 id                  // Auto-incremented bond ID
-  address mentor              // Wallet that created the bond
-  address learner             // Wallet that accepted the bond
-  string skillTitle           // e.g. "React State Management"
-  string successCriteria      // e.g. "Build a working Zustand store"
-  uint256 stakeAmount         // ETH staked by learner (in wei)
-  BondStatus status           // Current lifecycle state
-  uint256 deadline            // Unix timestamp — bond must complete by this date
-  string ipfsHash             // IPFS CID of evidence/metadata JSON
-  bool mentorSigned           // Has mentor called signCompletion?
-  bool learnerSigned          // Has learner called signCompletion?
-  uint256 disputeOpenedAt     // Timestamp when dispute was raised (0 if no dispute)
-}
-```
-
-### BondStatus Enum
-
-```
-enum BondStatus {
-  Pending,        // Created, not yet accepted
-  Active,         // Accepted + staked, mentorship in progress
-  MentorSigned,   // Mentor signed, waiting on learner
-  LearnerSigned,  // Learner signed, waiting on mentor
-  Completed,      // Both signed — NFTs minted, stake refunded
-  Disputed        // Deadline passed, dispute raised
-}
-```
-
----
-
-## Smart Contract Functions (Pseudocode)
-
-### CoSigned.sol
-
-```
-createBond(address learner, string skillTitle, string successCriteria, uint256 deadline, string ipfsHash)
-  REQUIRES: learner != msg.sender
-  REQUIRES: deadline > block.timestamp
-  CREATES: new Bond with status=Pending
-  INCREMENTS: bondCounter
-  ADDS: bondId to mentorBonds[msg.sender] and learnerBonds[learner]
-  EMITS: BondCreated(bondId, mentor, learner, skillTitle, deadline)
-
-acceptBond(uint256 bondId) payable
-  REQUIRES: msg.sender == bond.learner
-  REQUIRES: bond.status == Pending
-  REQUIRES: msg.value > 0
-  UPDATES: bond.status = Active, bond.stakeAmount = msg.value
-  EMITS: BondAccepted(bondId, learner, stakeAmount)
-
-signCompletion(uint256 bondId)
-  REQUIRES: msg.sender == bond.mentor OR msg.sender == bond.learner
-  REQUIRES: bond.status == Active OR MentorSigned OR LearnerSigned
-  IF msg.sender == mentor: SET bond.mentorSigned = true
-  IF msg.sender == learner: SET bond.learnerSigned = true
-  UPDATE status to MentorSigned or LearnerSigned accordingly
-  IF both signed:
-    SET status = Completed
-    REFUND bond.stakeAmount to bond.learner
-    CALL _mintSoulboundNFTs(bondId)
-  EMITS: BondSigned(bondId, signer)
-  IF completed: EMITS BondCompleted(bondId)
-
-disputeBond(uint256 bondId)
-  REQUIRES: msg.sender == bond.mentor OR bond.learner
-  REQUIRES: bond.status == Active
-  REQUIRES: block.timestamp > bond.deadline
-  SETS: bond.status = Disputed
-  SETS: bond.disputeOpenedAt = block.timestamp
-  EMITS: BondDisputed(bondId, raisedBy)
-
-resolveDispute(uint256 bondId)
-  REQUIRES: bond.status == Disputed
-  REQUIRES: block.timestamp >= bond.disputeOpenedAt + 7 days
-  REFUNDS: bond.stakeAmount to bond.learner
-  EMITS: DisputeResolved(bondId)
-
-getBond(uint256 bondId) view → Bond
-getBondsByAddress(address user) view → uint256[]
-```
-
-### CoSignedNFT.sol
-
-```
-Extends: ERC721, ERC-5192
-
-locked(uint256 tokenId) → always returns true
-
-transferFrom(...) → REVERTS with "CoSigned: soulbound"
-safeTransferFrom(...) → REVERTS with "CoSigned: soulbound"
-approve(...) → REVERTS with "CoSigned: soulbound"
-setApprovalForAll(...) → REVERTS with "CoSigned: soulbound"
-
-enum TokenType { LEARNER_PROOF, MENTOR_PROOF }
-
-mint(address to, TokenType tokenType, string metadataURI)
-  REQUIRES: msg.sender == CoSigned contract address
-  MINTS: new token to `to`
-  STORES: metadataURI for tokenId
-  EMITS: Locked(tokenId)  ← ERC-5192 requirement
-```
-
----
-
-## Dispute Resolution Logic
-
-**When can a dispute be raised?**
-- Bond status must be `Active` (accepted but not completed)
-- Current time must be past the bond's deadline
-- Either the mentor OR learner can raise it
-
-**What happens during the 7-day window?**
-- Once a dispute is raised, `signCompletion()` is BLOCKED — status is no longer signable
-- If 7 days pass with no resolution, `resolveDispute()` can be called by ANYONE
-- Stake is always refunded to the learner — mentor gets nothing (no completion = no credential)
-
-**Edge cases — all resolved:**
-- Both parties dispute simultaneously → first call wins, second reverts. Same outcome either way.
-- Deadline passes, no dispute raised → bond stays Active indefinitely. No forced resolution.
-- Both parties disappear after dispute → anyone can call `resolveDispute()` after 7 days. ETH never permanently locked.
-- Partial signing + deadline passes → `disputeBond()` requires `Active` status, so `MentorSigned`/`LearnerSigned` bonds cannot be disputed. Post-MVP: add `abandonBond()` for this case.
-
-**What "no response" means in code:**
-- After `disputeOpenedAt + 7 days`, if `bond.status` is still `Disputed`, `resolveDispute()` is callable
-- No oracle needed — purely time-based using `block.timestamp`
-
-> See `docs/contract-design.md` for full pseudocode, reentrancy analysis, and all 7 dispute scenarios.
-
----
-
-## Key Design Decisions
+## Key Technical Decisions
 
 | Decision | Rationale |
 |---|---|
-| Learner stakes ETH | Signals commitment; refunded on success, returned on dispute |
-| Both must sign independently | Prevents either party from faking completion |
-| Soulbound NFTs | Credentials can't be sold or transferred — they mean something |
-| IPFS for metadata | Decentralized storage; contract stores only the CID |
-| Base Sepolia | Low fees, EVM-compatible, good tooling for testnet |
-| 7-day dispute window | Gives the other party time to respond before stake is released |
+| Base Sepolia | Low fees, EVM-compatible, good tooling |
+| ERC-5192 soulbound | Non-transferable credentials — they mean something |
+| CEI pattern on ETH transfers | Prevents reentrancy on stake refund |
+| resolveDispute() callable by anyone | Prevents permanently locked ETH |
+| CoSigned deploys CoSignedNFT in constructor | Atomic binding — no wrong address risk |
+| Wagmi v2 + RainbowKit | Best-in-class wallet UX for EVM |
+| CSS variables for theming | Single source of truth, works in both modes |
+| Next.js App Router | Server components + client hooks cleanly separated |
 
 ---
 
-## What's In Scope (30 Days)
+## Bond State Machine
 
-- Full Bond lifecycle (create → accept → sign → complete → mint)
-- Dispute mechanism
-- Soulbound NFT minting
-- Full frontend (6 pages)
-- Testnet deployment
-- Real user testing
+```
+createBond()
+    │
+    ▼
+[PENDING] ──acceptBond()──► [ACTIVE]
+                                │
+                    ┌───────────┴───────────┐
+              mentor signs            learner signs
+                    │                       │
+                    ▼                       ▼
+            [MENTORSIGNED]          [LEARNERSIGNED]
+                    │                       │
+              learner signs           mentor signs
+                    └───────────┬───────────┘
+                                ▼
+                          [COMPLETED]
+                    stake refunded + NFTs minted
 
-## What's Post-Roadmap
+[ACTIVE] ──(deadline passed)──► disputeBond() ──► [DISPUTED]
+                                                        │
+                                              7 days pass
+                                                        │
+                                              resolveDispute()
+                                                        │
+                                              stake → learner
+```
 
-- Mainnet deployment
-- Subgraph (The Graph) for efficient bond querying
-- DAO governance for dispute resolution
-- Multi-skill bonds
-- Mentor staking (skin in the game for mentors too)
-- Mobile app
+---
+
+## Security Analysis
+
+| Function | ETH Transfer | Risk | Mitigation |
+|---|---|---|---|
+| createBond() | No | None | — |
+| acceptBond() | Receives ETH | Low | ETH held in contract |
+| signCompletion() | Yes (refund) | HIGH | CEI + nonReentrant |
+| disputeBond() | No | None | — |
+| resolveDispute() | Yes (refund) | HIGH | CEI + nonReentrant |
+
+---
+
+## Frontend Architecture
+
+```
+app/
+├── layout.tsx          — server component, CSS + fonts
+├── providers.tsx       — client component, Wagmi + RainbowKit
+├── page.tsx            — landing page
+├── dashboard/          — wallet-gated bond management
+├── bond/
+│   ├── create/         — mentor creates bond + IPFS upload
+│   └── [id]/           — bond detail + sign/accept/dispute
+├── explore/            — browse open bonds
+├── profile/[address]/  — public reputation page
+└── how-to-use/         — illustrated guide
+
+hooks/useCoSigned.ts    — all contract interactions
+lib/contract.ts         — addresses + ABIs
+lib/wagmi.ts            — chain config
+lib/pinata.ts           — IPFS upload
+```
+
+---
+
+## Deployment
+
+| Component | URL |
+|---|---|
+| Frontend | https://co-signed.vercel.app |
+| CoSigned contract | https://sepolia.basescan.org/address/0xd1D2a913eb75B43125AA860bea1BabC27F2d550A#code |
+| CoSignedNFT contract | https://sepolia.basescan.org/address/0xC6Fce62038C0FD7f50c447a51C05492096554df5#code |
+| GitHub | https://github.com/Omachilda-Dev1/CoSigned |
