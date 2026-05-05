@@ -104,7 +104,7 @@ If either party ghosts after the deadline, the other can raise a dispute. After 
 | Checkpoint 2 | 25 | ✅ Done | End-to-end testnet walkthrough |
 | Testing | 26–28 | ✅ Done | Real user testing, polish, mobile responsive |
 | Deploy | 29 | ✅ Done | Vercel deploy, final docs, ARCHITECTURE.md |
-| Demo Day | 30 | ⏳ Tomorrow | Demo video, final post, submission |
+| Demo Day | 30 | ✅ Done | Demo video, final post, submission |
 
 ---
 

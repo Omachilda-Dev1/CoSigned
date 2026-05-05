@@ -639,4 +639,23 @@ NEXT_PUBLIC_COSIGNED_NFT_ADDRESS=<COSIGNED_NFT_ADDRESS>
 
 ---
 
-<!-- Day 30 entries will be added here -->
+## [Day 30] — 2026-05-05 🎉 DEMO DAY — CHALLENGE COMPLETE
+
+### Added
+- Final LinkedIn post written (see below)
+- Demo script documented
+- Challenge submitted
+
+### Live
+- Frontend: https://co-signed.vercel.app
+- GitHub: https://github.com/Omachilda-Dev1/CoSigned
+- CoSigned: https://sepolia.basescan.org/address/0xd1D2a913eb75B43125AA860bea1BabC27F2d550A#code
+- CoSignedNFT: https://sepolia.basescan.org/address/0xC6Fce62038C0FD7f50c447a51C05492096554df5#code
+
+### Stats
+- 30 days of daily commits
+- 2 smart contracts deployed and verified
+- 13 tests passing
+- 7 frontend pages
+- 1 real bond completed with a real user
+- 1 soulbound NFT minted on Base Sepolia
