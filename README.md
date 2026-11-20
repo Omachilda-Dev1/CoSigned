@@ -39,11 +39,11 @@ If either party ghosts after the deadline, the other can raise a dispute. After 
 |---|---|
 | Smart Contracts | Solidity 0.8.20, Hardhat 2.x, ERC-5192 |
 | Blockchain | Base Sepolia Testnet (chainId: 84532) |
-| Frontend | Next.js 14 (App Router), Tailwind CSS, Framer Motion |
+| Frontend | Next.js 14 (App Router), TypeScript (strict), Tailwind CSS |
 | Web3 | Wagmi v2, RainbowKit, viem v2 |
-| State | Zustand |
+| Data | TanStack Query (via wagmi), multicall batching |
 | Forms | React Hook Form + Zod |
-| Storage | IPFS via Pinata SDK |
+| Storage | IPFS via Pinata (server-side API route) |
 | Deploy | Vercel (frontend) + Hardhat (contracts) |
 
 ---
@@ -112,35 +112,39 @@ If either party ghosts after the deadline, the other can raise a dispute. After 
 
 ```
 cosigned/
-├── contracts/
+├── contracts/                 # Solidity (deployed + verified — see addresses below)
 │   ├── CoSigned.sol
 │   ├── CoSignedNFT.sol
 │   └── test/
 ├── scripts/
-│   └── deploy.js
+│   ├── deploy.js
+│   └── copy-abis.js           # artifacts → frontend/lib/abi.ts (typed, `as const`)
 ├── hardhat.config.js
-├── package.json
-├── deployments.json
 └── frontend/
     ├── app/
-    │   ├── layout.tsx
-    │   ├── page.tsx              # Landing
-    │   ├── dashboard/page.tsx    # User dashboard
-    │   ├── bond/
-    │   │   ├── create/page.tsx   # Create bond form
-    │   │   └── [id]/page.tsx     # Bond detail
-    │   ├── profile/
-    │   │   └── [address]/page.tsx # Public profile
-    │   └── explore/page.tsx      # Discover open bonds
+    │   ├── page.tsx                    # Landing
+    │   ├── explore/                    # Public bond registry (filter + search)
+    │   ├── dashboard/                  # Your bonds, grouped by role + "needs action"
+    │   ├── bond/create/                # Create form with live credential preview
+    │   ├── bond/[id]/                  # Bond detail, actions, credential
+    │   ├── profile/[address]/          # Public credentials + history
+    │   ├── how-to-use/                 # Guide + FAQ
+    │   └── api/ipfs/route.ts           # Pins metadata to Pinata (JWT stays server-side)
     ├── components/
-    │   ├── wallet/
-    │   ├── bond/
-    │   ├── nft/
-    │   └── ui/
+    │   ├── bond/                       # BondCard, BondActions, BondTimeline, StatusBadge
+    │   ├── credential/                 # SVG certificate + PNG export, share panel
+    │   ├── layout/                     # SiteHeader, SiteFooter
+    │   ├── ui/                         # Button, Field, Card, icons, Logo, theme
+    │   └── wallet/                     # ConnectButton, WalletGuard
     ├── hooks/
+    │   ├── useBonds.ts                 # Reads (single, batched, by address, all)
+    │   └── useBondTransaction.ts       # Writes: chain switch → wallet → receipt → refetch
     ├── lib/
-    ├── store/
-    └── types/
+    │   ├── abi.ts                      # Generated typed ABIs
+    │   ├── bond.ts                     # Status + action rules mirroring the contract
+    │   ├── config.ts                   # Addresses, chain, explorer URLs
+    │   └── format.ts, ipfs.ts, wagmi.ts
+    └── types/bond.ts
 ```
 
 ---
@@ -176,6 +180,27 @@ npm run dev
 # → http://localhost:3000
 ```
 
+> **Windows note:** run Hardhat from a path with an uppercase drive letter (`C:\...`). A lowercase `c:\` working directory makes Node load `chai` twice, and the matchers (`revertedWith`, `emit`) then fail.
+
+### Frontend environment variables
+
+| Variable | Required | Purpose |
+|---|---|---|
+| `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` | For WalletConnect | Mobile / QR wallets. Injected wallets work without it. |
+| `PINATA_JWT` | Optional | Server-only. Pins bond metadata (display names) to IPFS. Without it, bonds are created with no metadata. |
+| `NEXT_PUBLIC_SITE_URL` | Optional | Canonical URL for share links and QR codes. Defaults to the Vercel deployment. |
+| `NEXT_PUBLIC_COSIGNED_ADDRESS` / `NEXT_PUBLIC_COSIGNED_NFT_ADDRESS` | Optional | Override the deployed contract addresses. |
+| `NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL` | Optional | Custom RPC endpoint (defaults to the public one). |
+
+### Frontend scripts
+
+```bash
+npm run dev        # dev server
+npm run build      # production build (includes lint + type check)
+npm run typecheck  # tsc --noEmit
+npm run lint       # next lint
+```
+
 ---
 
 ## Contract Addresses
@@ -184,12 +209,6 @@ npm run dev
 |---|---|---|
 | CoSigned.sol | Base Sepolia | [0xd1D2a913eb75B43125AA860bea1BabC27F2d550A](https://sepolia.basescan.org/address/0xd1D2a913eb75B43125AA860bea1BabC27F2d550A#code) ✅ |
 | CoSignedNFT.sol | Base Sepolia | [0xC6Fce62038C0FD7f50c447a51C05492096554df5](https://sepolia.basescan.org/address/0xC6Fce62038C0FD7f50c447a51C05492096554df5#code) ✅ |
-
----
-
-## Screenshots
-
-> Coming Day 18+
 
 ---
 
