@@ -1,42 +1,42 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { usePathname } from "next/navigation";
-import { WagmiProvider } from "wagmi";
+import { useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
+import { WagmiProvider } from "wagmi";
+import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import { wagmiConfig } from "@/lib/wagmi";
-import Navbar from "@/components/ui/Navbar";
+import { chain } from "@/lib/config";
+import { ThemeProvider, useTheme } from "@/components/ui/ThemeToggle";
 
-const queryClient = new QueryClient();
-const CUSTOM_NAV_PAGES = ["/profile", "/bond"];
-
-function PageWrapper({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
-  const useSharedNav = !CUSTOM_NAV_PAGES.some(p => pathname.startsWith(p));
+function RainbowKit({ children }: { children: ReactNode }) {
+  const { theme } = useTheme();
+  const shared = { borderRadius: "medium", fontStack: "system", overlayBlur: "small" } as const;
   return (
-    <div key={pathname} className="page-enter">
-      {useSharedNav && <Navbar />}
+    <RainbowKitProvider
+      initialChain={chain}
+      theme={
+        theme === "dark"
+          ? darkTheme({ ...shared, accentColor: "#4DFFD2", accentColorForeground: "#04160F" })
+          : lightTheme({ ...shared, accentColor: "#007A6A", accentColorForeground: "#FFFFFF" })
+      }
+    >
       {children}
-    </div>
+    </RainbowKitProvider>
   );
 }
 
-export default function Providers({ children }: { children: ReactNode }) {
+export function Providers({ children }: { children: ReactNode }) {
+  const [queryClient] = useState(
+    () => new QueryClient({ defaultOptions: { queries: { staleTime: 15_000, refetchOnWindowFocus: true } } }),
+  );
+
   return (
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          theme={darkTheme({
-            accentColor: "#4DFFD2",
-            accentColorForeground: "#0A0A0F",
-            borderRadius: "medium",
-            fontStack: "system",
-          })}
-        >
-          <PageWrapper>{children}</PageWrapper>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <ThemeProvider>
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKit>{children}</RainbowKit>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </ThemeProvider>
   );
 }

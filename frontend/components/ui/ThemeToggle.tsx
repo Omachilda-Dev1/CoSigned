@@ -1,74 +1,60 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { Moon, Sun } from "@/components/ui/icons";
 
-function SunIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="4"/>
-      <line x1="12" y1="2" x2="12" y2="4"/>
-      <line x1="12" y1="20" x2="12" y2="22"/>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-      <line x1="2" y1="12" x2="4" y2="12"/>
-      <line x1="20" y1="12" x2="22" y2="12"/>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-    </svg>
-  );
-}
+type Theme = "light" | "dark";
 
-function MoonIcon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-    </svg>
-  );
-}
+const STORAGE_KEY = "cosigned-theme";
 
-export default function ThemeToggle() {
-  const [dark, setDark] = useState(true);
+/**
+ * Runs before hydration (inlined in <head>) so the correct theme paints first.
+ * Defaults to dark — the brand's primary look.
+ */
+export const themeInitScript = `(function(){try{var t=localStorage.getItem("${STORAGE_KEY}");document.documentElement.classList.toggle("dark",t?t==="dark":true)}catch(e){document.documentElement.classList.add("dark")}})()`;
+
+const ThemeContext = createContext<{ theme: Theme; toggle: () => void }>({
+  theme: "dark",
+  toggle: () => {},
+});
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<Theme>("dark");
 
   useEffect(() => {
-    if (dark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [dark]);
+    setTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
+  }, []);
 
+  const toggle = useCallback(() => {
+    setTheme((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      document.documentElement.classList.toggle("dark", next === "dark");
+      try {
+        localStorage.setItem(STORAGE_KEY, next);
+      } catch {
+        /* storage blocked */
+      }
+      return next;
+    });
+  }, []);
+
+  return <ThemeContext.Provider value={{ theme, toggle }}>{children}</ThemeContext.Provider>;
+}
+
+export const useTheme = () => useContext(ThemeContext);
+
+export function ThemeToggle() {
+  const { theme, toggle } = useTheme();
+  const next = theme === "dark" ? "light" : "dark";
   return (
     <button
-      onClick={() => setDark(!dark)}
-      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 7,
-        padding: "7px 13px",
-        borderRadius: 8,
-        border: "1px solid var(--border)",
-        backgroundColor: "var(--bg-card)",
-        color: "var(--text-sub)",
-        cursor: "pointer",
-        transition: "border-color 0.15s, color 0.15s",
-        fontSize: 12,
-        fontFamily: "var(--font-dm-mono, monospace)",
-        letterSpacing: "0.03em",
-        userSelect: "none",
-        whiteSpace: "nowrap",
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.borderColor = "var(--accent)";
-        e.currentTarget.style.color = "var(--text)";
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.borderColor = "var(--border)";
-        e.currentTarget.style.color = "var(--text-sub)";
-      }}
+      type="button"
+      onClick={toggle}
+      aria-label={`Switch to ${next} theme`}
+      title={`Switch to ${next} theme`}
+      className="grid size-9 place-items-center rounded-lg text-fg-muted transition-colors hover:bg-raised hover:text-fg"
     >
-      {dark ? <SunIcon /> : <MoonIcon />}
-      <span>{dark ? "Light" : "Dark"}</span>
+      {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
     </button>
   );
 }
